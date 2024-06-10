@@ -1,6 +1,6 @@
 package activeRecord;
 
-import connection.Bd;
+import bd.Bd;
 
 import java.sql.SQLException;
 
