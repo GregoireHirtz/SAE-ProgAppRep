@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
-import java.sql.Timestamp;
 
 public class ServiceResto extends RemoteServer implements ServiceRestaurant {
 
