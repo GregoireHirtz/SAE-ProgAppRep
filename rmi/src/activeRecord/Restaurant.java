@@ -1,9 +1,10 @@
 package activeRecord;
 
-import bd.Bd;
+import connection.Bd;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class Restaurant implements ActiveRecord{
 
@@ -18,6 +19,13 @@ public class Restaurant implements ActiveRecord{
             throw new IllegalArgumentException("La latitude, ni la longitude ne peut etre null");
 
         this.numrestau = 0;
+        this.nom = nom;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    private Restaurant(int numrestau, String nom, Double latitude, Double longitude) {
+        this.numrestau = numrestau;
         this.nom = nom;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -46,7 +54,7 @@ public class Restaurant implements ActiveRecord{
 
 
     @Override
-    public void save(Bd bd) {
+    public void save(Bd bd) throws SQLException {
         if (bd == null) throw new IllegalArgumentException("La connexion ne peut pas être null");
 
         // insertion nouveau restaurant
@@ -89,5 +97,21 @@ public class Restaurant implements ActiveRecord{
 
     public String toString(){
         return "Restaurant : "+this.nom + "-" + this.latitude + "-" + this.longitude;
+    }
+
+
+    public static ArrayList<Restaurant> getAll(Bd bd) throws SQLException{
+
+        if (bd == null)
+            throw new IllegalArgumentException("bd == null");
+
+        String requete = "SELECT * FROM restaurant";
+
+        ResultSet r = bd.executeQuery(requete);
+        ArrayList<Restaurant> restaurants= new ArrayList<Restaurant>();
+        while (r.next()){
+            restaurants.add(new Restaurant(r.getInt("numrestau"), r.getString("nom"), r.getDouble("latitude"), r.getDouble("longitude")));
+        }
+        return  restaurants;
     }
 }
