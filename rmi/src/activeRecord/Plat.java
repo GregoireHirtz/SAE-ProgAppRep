@@ -3,6 +3,7 @@ package activeRecord;
 import bd.Bd;
 
 import java.sql.Array;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -28,16 +29,29 @@ public class Plat implements ActiveRecord{
         this.qtservie = qtservie;
     }
 
-    public Plat(int numplat, String libelle, String type, double prixunit, int qtservie){
-        if (numplat <= 0 || libelle == null || type == null || prixunit < 0 || qtservie < 0) {
-            throw new IllegalArgumentException("Les paramètres ne peuvent pas être null");
+    public Plat(Bd bd, int numplat){
+        if (bd == null)
+            throw new IllegalArgumentException("La connexion ne peut pas être null");
+
+        if (numplat <= 0)
+            throw new IllegalArgumentException("Le paramètre ne peuvent pas négatif ou égale à 0");
+
+
+        String requete = "SELECT * FROM plat WHERE numplat = ?";
+        try{
+            ResultSet result = bd.executeQuery(requete, numplat);
+            if (result.next()) {
+                this.numplat = result.getInt("numplat");
+                this.libelle = result.getString("libelle");
+                this.type = result.getString("type");
+                this.prixunit = result.getDouble("prixunit");
+                this.qtservie = result.getInt("qtservie");
+            }
+        }catch (SQLException e){
+            throw new IllegalArgumentException("L'id fournie n'est pas trouvé en bd");
         }
 
-        this.numplat = numplat;
-        this.libelle = libelle;
-        this.type = type;
-        this.prixunit = prixunit;
-        this.qtservie = qtservie;
+
     }
 
     @Override

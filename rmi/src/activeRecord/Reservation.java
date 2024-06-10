@@ -34,11 +34,29 @@ public class Reservation implements ActiveRecord{
         this.montcom = null;
     }
 
-    public Reservation(int numres){
-        if (numres <= 0) {
-            throw new IllegalArgumentException("Les paramètres ne peuvent pas être null");
-        }
+    public Reservation(Bd bd, int numres){
+        if (bd == null)
+            throw new IllegalArgumentException("La connexion ne peut pas être null");
 
+        if (numres <= 0)
+            throw new IllegalArgumentException("Les paramètres ne peuvent pas être négatif ou églae à 0");
+
+        String requete = "SELECT * FROM reservation WHERE numres = ?";
+        try{
+            ResultSet result = bd.executeQuery(requete, numres);
+            if (result.next()) {
+                this.numres = result.getInt("numres");
+                this.numtab = result.getInt("numtab");
+                this.datres = result.getDate("datres");
+                this.nbpers = result.getInt("nbpers");
+                this.datpaie = result.getDate("datpaie");
+                this.modpaie = result.getString("modpaie");
+                this.montcom = result.getDouble("montcom");
+            }
+
+        }catch (SQLException e){
+            throw new IllegalArgumentException("Le numero de reservatio  founrie n'est pas trouvé en bd");
+        }
         // recuperer les data sur la bd ou renvoye erreur id non trouve dans bd
     }
 
