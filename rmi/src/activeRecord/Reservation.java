@@ -57,7 +57,6 @@ public class Reservation implements ActiveRecord{
         }catch (SQLException e){
             throw new IllegalArgumentException("Le numero de reservatio  founrie n'est pas trouvé en bd");
         }
-        // recuperer les data sur la bd ou renvoye erreur id non trouve dans bd
     }
 
     @Override

@@ -20,11 +20,24 @@ public class Tabl implements ActiveRecord {
         this.nbplace = nbplace;
     }
 
-    public Tabl(int nbplace) {
-        if (nbplace < 0) throw new IllegalArgumentException("Le nombre de place ne peut pas être négatif");
+    public Tabl(Bd bd, int nbplace) {
+        if (bd == null)
+            throw new IllegalArgumentException("La connexion ne peut pas être null");
 
-        this.numtab = 0;
-        this.nbplace = nbplace;
+        if (nbplace < 0)
+            throw new IllegalArgumentException("Le nombre de place ne peut pas être négatif");
+
+        String requete = "SELECT * FROM tabl WHERE numtab= ?";
+        try{
+            ResultSet result = bd.executeQuery(requete, numtab);
+            if (result.next()) {
+                this.numtab = result.getInt("numtab");
+                this.nbplace = result.getInt("nbplace");
+            }
+
+        }catch (SQLException e){
+            throw new IllegalArgumentException("Le numero de reservatio  founrie n'est pas trouvé en bd");
+        }
     }
 
     @Override
@@ -52,46 +65,5 @@ public class Tabl implements ActiveRecord {
 
     public String toString(){
         return "Table n°" + this.numtab + " (" + this.nbplace + " places)";
-    }
-
-    public int getNbplace() {
-        return nbplace;
-    }
-
-
-
-
-
-    public static Tabl findByNum(Bd bd, int numtab) throws SQLException {
-        if (bd == null) throw new IllegalArgumentException("La connexion ne peut pas être null");
-
-        ResultSet rs = bd.executeQuery("SELECT * FROM tabl WHERE numtab = ?", numtab);
-        if (rs.next()){
-            return new Tabl(rs.getInt("numtab"), rs.getInt("nbplace"));
-        }
-        return null;
-    }
-
-    public static List<Tabl> getTableLibre(Bd bd, Date date) throws SQLException {
-        if (bd == null) throw new IllegalArgumentException("La connexion ne peut pas être null");
-        if (date == null) throw new IllegalArgumentException("La date ne peut pas être null");
-
-        ResultSet rs = bd.executeQuery("SELECT * FROM tabl WHERE numtab NOT IN (SELECT numtab FROM reservation WHERE DATE_SUB(datres, INTERVAL 2 HOUR) < ? AND ((datpaie IS NULL AND DATE_ADD(datres, INTERVAL 2 HOUR) > ?) OR (datpaie IS NOT NULL AND datpaie > ?)))", date, date, date);
-        ArrayList<Tabl> tables = new ArrayList<>();
-        while (rs.next()){
-            tables.add(new Tabl(rs.getInt("numtab"), rs.getInt("nbplace")));
-        }
-        return tables;
-    }
-
-    public static List<Tabl> getAll(Bd bd) throws SQLException {
-        if (bd == null) throw new IllegalArgumentException("La connexion ne peut pas être null");
-
-        ResultSet rs = bd.executeQuery("SELECT * FROM tabl");
-        ArrayList<Tabl> tables = new ArrayList<>();
-        while (rs.next()){
-            tables.add(new Tabl(rs.getInt("numtab"), rs.getInt("nbplace")));
-        }
-        return tables;
     }
 }

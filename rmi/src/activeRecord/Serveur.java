@@ -28,15 +28,27 @@ public class Serveur implements ActiveRecord{
         this.grade = grade;
     }
 
-    public Serveur(int numserv, String email, String passwd, String nomserv, String grade) {
-        if (email == null || passwd == null || nomserv == null || grade == null) {
-            throw new IllegalArgumentException("Les paramètres ne peuvent pas être null");
+    public Serveur(Bd bd, int numserv) {
+        if (bd == null)
+            throw new IllegalArgumentException("La connexion ne peut pas être null");
+
+        if (numserv <= 0)
+            throw new IllegalArgumentException("Les paramètres ne peuvent pas négatif ou égale à 0");
+
+        String requete = "SELECT * FROM serveur WHERE numserv = ?";
+        try{
+            ResultSet result = bd.executeQuery(requete, numserv);
+            if (result.next()) {
+                this.numserv = result.getInt("numserv");
+                this.email = result.getString("email");
+                this.passwd = result.getString("passwd");
+                this.nomserv = result.getString("nomserv");
+                this.grade = result.getString("grade");
+            }
+
+        }catch (SQLException e){
+            throw new IllegalArgumentException("Le numero de reservatio  founrie n'est pas trouvé en bd");
         }
-        this.numserv = numserv;
-        this.email = email;
-        this.passwd = passwd;
-        this.nomserv = nomserv;
-        this.grade = grade;
     }
 
 
@@ -65,58 +77,5 @@ public class Serveur implements ActiveRecord{
 
     public String toString(){
         return "Serveur " + this.numserv + " : " + this.nomserv + " (" + this.grade + ")";
-    }
-
-    public String getGrade() {
-        return this.grade;
-    }
-
-
-
-
-
-    public static Serveur getByEmail(Bd bd, String email) {
-        if (email == null) throw new IllegalArgumentException("L'email ne peut pas être null");
-
-        String sql = "SELECT * FROM serveur WHERE email = ?";
-        try{
-            ResultSet rs = bd.executeQuery(sql, email);
-            if (rs.next()){
-                return new Serveur(rs.getInt("numserv"), rs.getString("email"), rs.getString("passwd"), rs.getString("nomserv"), rs.getString("grade"));
-            }
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static List<Serveur> getAll(Bd bd){
-        if (bd == null) throw new IllegalArgumentException("La connexion ne peut pas être null");
-
-        try{
-            ResultSet rs = bd.executeQuery("SELECT * FROM serveur");
-            ArrayList<Serveur> serveurs = new ArrayList<>();
-            while (rs.next()){
-                serveurs.add(new Serveur(rs.getInt("numserv"), rs.getString("email"), rs.getString("passwd"), rs.getString("nomserv"), rs.getString("grade")));
-            }
-            return serveurs;
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static Serveur findByNum(Bd bd, int numserv){
-        if (bd == null) throw new IllegalArgumentException("La connexion ne peut pas être null");
-
-        try{
-            ResultSet rs = bd.executeQuery("SELECT * FROM serveur WHERE numserv = ?", numserv);
-            if (rs.next()){
-                return new Serveur(rs.getInt("numserv"), rs.getString("email"), rs.getString("passwd"), rs.getString("nomserv"), rs.getString("grade"));
-            }
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-        return null;
     }
 }
