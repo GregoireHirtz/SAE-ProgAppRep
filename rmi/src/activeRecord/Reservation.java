@@ -13,25 +13,26 @@ import java.util.List;
 public class Reservation implements ActiveRecord{
 
     private int numres;
-    private int numtab;
-    private Date datres;
+    private String nom, prenom;
     private int nbpers;
-    private Date datpaie;
-    private String modpaie;
-    private Double montcom;
+    private String telephone;
+    private int numrestau;
 
-    public Reservation(int numtab, Date datres, int nbpers) {
-        if (numtab < 0 || datres == null || nbpers < 0) {
-            throw new IllegalArgumentException("Les paramètres ne peuvent pas être null");
-        }
 
-        this.numres = 0;
-        this.numtab = numtab;
-        this.datres = datres;
+
+    public Reservation(String nom, String prenom, int nbpers, String telephone, int numrestau) {
+        if (nom==null || prenom==null || telephone==null)
+            throw new IllegalArgumentException("nom, prenom, telephone == null");
+        if (nbpers<=0)
+            throw new IllegalArgumentException("nbpers <= 0");
+
+    // TODO pas de vérification que le numserv bien valide :  a faire
+
+        this.nom = nom;
+        this.prenom = prenom;
         this.nbpers = nbpers;
-        this.datpaie = null;
-        this.modpaie = null;
-        this.montcom = null;
+        this.telephone = telephone;
+        this.numrestau = numrestau;
     }
 
     public Reservation(Bd bd, int numres){
@@ -46,17 +47,16 @@ public class Reservation implements ActiveRecord{
             ResultSet result = bd.executeQuery(requete, numres);
             if (result.next()) {
                 this.numres = result.getInt("numres");
-                this.numtab = result.getInt("numtab");
-                this.datres = result.getDate("datres");
+                this.nom = result.getString("nom");
+                this.prenom = result.getString("prenom");
                 this.nbpers = result.getInt("nbpers");
-                this.datpaie = result.getDate("datpaie");
-                this.modpaie = result.getString("modpaie");
-                this.montcom = result.getDouble("montcom");
+                this.telephone = result.getString("telephone");
+                this.numrestau = result.getInt("numrestau");
+            }else{
+                throw new IllegalArgumentException("Le numero de reservation founrie n'est pas trouvé en bd");
             }
 
-        }catch (SQLException e){
-            throw new IllegalArgumentException("Le numero de reservatio  founrie n'est pas trouvé en bd");
-        }
+        }catch (SQLException e){}
     }
 
     @Override
@@ -64,25 +64,36 @@ public class Reservation implements ActiveRecord{
         if (bd == null) throw new IllegalArgumentException("La connexion ne peut pas être null");
 
         if (this.numres == 0) {
-            String sql = "INSERT INTO reservation (numtab, datres, nbpers, datpaie, modpaie, montcom) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO reservation (nom, prenom, nbpers, telephone, numrestau) VALUES (?, ?, ?, ?, ?)";
             try{
-                bd.executeQuery(sql, this.numtab, this.datres, this.nbpers, this.datpaie, this.modpaie, this.montcom);
+                bd.executeQuery(sql);
             }catch (Exception e){
                 e.printStackTrace();
             }
         }
 
         else{
-            String sql = "UPDATE reservation SET numtab = ?, datres = ?, nbpers = ?, datpaie = ?, modpaie = ?, montcom = ? WHERE numres = ?";
+            String sql = "UPDATE reservation SET nom=?, prenom=?, nbpers=?, telephone=?, numrestau=? WHERE numres = ?";
             try{
-                bd.executeQuery(sql, this.numtab, this.datres, this.nbpers, this.datpaie, this.modpaie, this.montcom, this.numres);
+                bd.executeQuery(sql, this.nom, this.prenom, this.nbpers, this.telephone, this.numrestau, this.numres);
             }catch (Exception e){
                 e.printStackTrace();
             }
         }
     }
 
+    @Override
+    public void delete(Bd bd) {
+        if (this.numres <= 0)
+            throw new IllegalArgumentException("l'objet actuel n'est pas sauvegardé sur le bd");
+
+        String requete = "DELETE FROM reservation WHERE numres = ?";
+        try{
+            ResultSet r = bd.executeQuery(requete, this.numres);
+        }catch (SQLException e){}
+    }
+
     public String toString(){
-        return "Réservation n°" + this.numres + " pour " + this.nbpers + " personnes" + " à la table n°" + this.numtab + " le " + this.datres + " pour un montant de " + this.montcom + "€";
+        return "Réservation n°"+numres+" ("+this.nom+" "+this.prenom+" : "+this.nbpers+" "+this.telephone+" : "+this.numrestau+")";
     }
 }

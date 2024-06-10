@@ -26,13 +26,6 @@ public class Bd {
         return rs;
     }
 
-    public void execute(String query) throws SQLException{
-        if (query==null) throw new NullPointerException("la requête ne peut pas être null");
-
-        Statement statement = this.connection.createStatement();
-        statement.execute(query);
-    }
-
     public ResultSet executeQuery(String query, Object... params) throws SQLException{
         if (query==null) throw new NullPointerException("la requête ne peut pas être null");
 

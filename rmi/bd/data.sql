@@ -1,3 +1,5 @@
+SET AUTOCOMMIT =1;
+
 DROP TABLE IF EXISTS reservation;
 DROP TABLE IF EXISTS restaurant;
 
@@ -5,7 +7,7 @@ DROP TABLE IF EXISTS restaurant;
 CREATE TABLE reservation (
     numres INT(4) AUTO_INCREMENT,
     nom VARCHAR(16),
-    PRENOM VARCHAR(16),
+    prenom VARCHAR(16),
     nbpers INT(2),
     telephone VARCHAR(10),
     numrestau INT(4),
@@ -17,16 +19,10 @@ CREATE TABLE restaurant
 (
     numrestau INT(4) AUTO_INCREMENT,
     nom VARCHAR(32),
-    prenom VARCHAR2(32),
     latitude DOUBLE,
     longitude DOUBLE,
     PRIMARY KEY (numrestau)
 );
-
-
-
-
-
 
 
 ALTER TABLE reservation
@@ -37,29 +33,16 @@ ALTER TABLE reservation
 
 
 
+-- Insère quelques restaurants
+INSERT INTO restaurant (nom, latitude, longitude) VALUES
+    ('Le Petit Parisien', 48.8566, 2.3522), -- Paris
+    ('The London Pub', 51.5074, -0.1278), -- Londres
+    ('La Bella Italia', 41.9028, 12.4964), -- Rome
+    ('Tokyo Sushi House', 35.6895, 139.6917); -- Tokyo
 
-
-
-
-
--- Tuples de tabl
-ALTER TABLE tabl AUTO_INCREMENT = 10;
-INSERT INTO tabl (nbplace)
-VALUES
-    (4),
-    (6),
-    (8),
-    (4),
-    (6),
-    (4),
-    (4),
-    (6),
-    (2),
-    (4);
-
-
--- Tuples de reservation
-#ALTER TABLE reservation AUTO_INCREMENT = 100;
-#INSERT INTO reservation (datres, nbpers, datpaie, modpaie)
-#VALUES
-#    ('2021-09-10 19:00', 2, '2021),
+-- Insère quelques réservations
+INSERT INTO reservation (nom, prenom, nbpers, telephone, numrestau) VALUES
+    ('Doe', 'John', 2, '1234567890', 1), -- Réservation au Le Petit Parisien
+    ('Smith', 'Jane', 4, '9876543210', 2), -- Réservation au The London Pub
+    ('Garcia', 'Maria', 3, '4561237890', 3), -- Réservation à La Bella Italia
+    ('Sato', 'Takashi', 2, '7894561230', 4); -- Réservation au Tokyo Sushi House
