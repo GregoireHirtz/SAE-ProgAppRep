@@ -31,25 +31,23 @@ public class Restaurant implements ActiveRecord{
         this.longitude = longitude;
     }
 
-    public Restaurant(Bd bd, int numrestau) {
+    public Restaurant(Bd bd, int numrestau) throws SQLException {
         if (bd==null)
             throw new IllegalArgumentException("Le bd ne peut pas etre null");
         if (numrestau<=0)
             throw new IllegalArgumentException("Le numrestau ne peut pas etre <=0");
 
         String requete = "SELECT * FROM restaurant WHERE numrestau = ?";
-        try{
-            ResultSet result = bd.executeQuery(requete, numrestau);
-            if (result.next()) {
-                this.numrestau = result.getInt("numrestau");
-                this.nom = result.getString("nom");
-                this.latitude = result.getDouble("latitude");
-                this.longitude = result.getDouble("longitude");
-            }else{
-                throw new IllegalArgumentException("Le numero du restau founrie n'est pas trouvé en bd");
-            }
 
-        }catch (SQLException e){}
+        ResultSet result = bd.executeQuery(requete, numrestau);
+        if (result.next()) {
+            this.numrestau = result.getInt("numrestau");
+            this.nom = result.getString("nom");
+            this.latitude = result.getDouble("latitude");
+            this.longitude = result.getDouble("longitude");
+        }else{
+            throw new IllegalArgumentException("Le numero du restau founrie n'est pas trouvé en bd");
+        }
     }
 
 
@@ -78,7 +76,7 @@ public class Restaurant implements ActiveRecord{
     }
 
     @Override
-    public void delete(Bd bd) {
+    public void delete(Bd bd) throws SQLException {
         if (this.numrestau <= 0)
             throw new IllegalArgumentException("l'objet actuel n'est pas sauvegardé sur le bd");
 

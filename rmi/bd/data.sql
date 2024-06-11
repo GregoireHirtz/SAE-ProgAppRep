@@ -1,7 +1,6 @@
-SET AUTOCOMMIT =1;
-
 DROP TABLE IF EXISTS reservation;
 DROP TABLE IF EXISTS restaurant;
+DROP TABLE IF EXISTS plat;
 
 -- Table reservation
 CREATE TABLE reservation (
@@ -24,6 +23,14 @@ CREATE TABLE restaurant
     PRIMARY KEY (numrestau)
 );
 
+-- Table plat
+CREATE TABLE plat (
+    numplat INT(4) AUTO_INCREMENT,
+    libelle VARCHAR(40),
+    type VARCHAR(15),
+    prixunit DECIMAL(6,2),
+    PRIMARY KEY (numplat)
+);
 
 ALTER TABLE reservation
     ADD CONSTRAINT fk_reservation_restaurant
@@ -46,3 +53,24 @@ INSERT INTO reservation (nom, prenom, nbpers, telephone, numrestau) VALUES
     ('Smith', 'Jane', 4, '9876543210', 2), -- Réservation au The London Pub
     ('Garcia', 'Maria', 3, '4561237890', 3), -- Réservation à La Bella Italia
     ('Sato', 'Takashi', 2, '7894561230', 4); -- Réservation au Tokyo Sushi House
+
+
+-- Tuples de Plat
+INSERT INTO plat (libelle, type, prixunit)
+VALUES
+    ('assiette de crudités', 'Entrée', 90),
+    ('tarte de saison', 'Dessert', 90),
+    ('sorbet mirabelle', 'Dessert', 90),
+    ('filet de boeuf', 'Viande', 90),
+    ('salade verte', 'Entrée', 90),
+    ('chevre chaud', 'Entrée', 90),
+    ('pate lorrain', 'Entrée', 90),
+    ('saumon fumé', 'Entrée', 90),
+    ('entrecote printaniere', 'Viande', 90),
+    ('gratin dauphinois', 'Plat', 90),
+    ('brochet à l\'oseille', 'Poisson', 90),
+    ('gigot d\'agneau', 'Viande', 90),
+    ('crème caramel', 'Dessert', 90),
+    ('munster au cumin', 'Fromage', 90),
+    ('filet de sole au beurre', 'Poisson', 90),
+    ('fois gras de lorraine', 'Entrée', 90);

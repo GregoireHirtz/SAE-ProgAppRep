@@ -1,8 +1,5 @@
-import activeRecord.Reservation;
 import activeRecord.Restaurant;
 import bd.Bd;
-
-import java.rmi.RemoteException;
 
 public class Main {
 
@@ -10,8 +7,8 @@ public class Main {
 
         Bd bd = new Bd("jdbc:mariadb://localhost:3306/miaam", "user", "password");
 
-        Restaurant r = new Restaurant(bd, 1);
+        Restaurant r = new Restaurant(bd, 2);
         System.out.println(r);
-        r.delete(bd);
+        //r.delete(bd);
     }
 }
