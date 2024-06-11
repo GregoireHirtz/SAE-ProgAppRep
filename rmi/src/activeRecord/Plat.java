@@ -48,7 +48,7 @@ public class Plat implements ActiveRecord{
         if (this.numplat == 0) {
             String sql = "INSERT INTO plat (libelle, type, prixunit, qtservie) VALUES (?, ?, ?, ?)";
             try{
-                bd.executeQuery(sql, this.libelle, this.type, this.prixunit, this.qtservie);
+                bd.executeQuery(sql, this.libelle, this.type, this.prixunit);
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -57,7 +57,7 @@ public class Plat implements ActiveRecord{
         else{
             String sql = "UPDATE plat SET libelle = ?, type = ?, prixunit = ?, qteservie = ? WHERE numplat = ?";
             try{
-                bd.executeQuery(sql, this.libelle, this.type, this.prixunit, this.qtservie, this.numplat);
+                bd.executeQuery(sql, this.libelle, this.type, this.prixunit, this.numplat);
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -70,6 +70,6 @@ public class Plat implements ActiveRecord{
     }
 
     public String toString(){
-        return "- ["+this.numplat+"] " +this.libelle + " (" + this.type + ") - " + this.prixunit + "€" + " - " + this.qtservie + " restants";
+        return "- ["+this.numplat+"] " +this.libelle + " (" + this.type + ") - " + this.prixunit + "€" + " - " + " restants";
     }
 }
