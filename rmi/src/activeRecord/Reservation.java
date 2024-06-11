@@ -2,6 +2,7 @@ package activeRecord;
 
 import bd.Bd;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -15,9 +16,9 @@ public class Reservation implements ActiveRecord {
 
 
 
-    public Reservation(String nom, String prenom, int nbpers, String telephone, int numrestau) {
-        if (nom==null || prenom==null || telephone==null)
-            throw new IllegalArgumentException("nom, prenom, telephone == null");
+    public Reservation(String nom, String prenom, int nbpers, String telephone, int numrestau, Date date) {
+        if (nom==null || prenom==null || telephone==null || date==null)
+            throw new IllegalArgumentException("nom("+nom+"), prenom("+prenom+"), telephone("+telephone+") ou date("+date+") sont null");
         if (nbpers<=0)
             throw new IllegalArgumentException("nbpers <= 0");
 

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,6 +24,9 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         this.bd = bd;
     }
 
+    public String getRestaurant(int index) throws RemoteException, RuntimeException {
+        return "";
+    }
     @Override
     public String getRestaurants() throws RemoteException, RuntimeException {
 
@@ -74,11 +78,11 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
     }
 
     @Override
-    public void reserverTable(String nom, String prenom, int nbpers, String telephone, int numrestau) throws RemoteException, RuntimeException {
+    public void reserverTable(String nom, String prenom, int nbpers, String telephone, int numrestau, Date date) throws RemoteException, RuntimeException {
         //TODO
         //Date de réservation & vérification de l'unicité des tâches
         //Sûrement à faire directement dans la méthode save
-        Reservation reservation = new Reservation(nom, prenom, nbpers, telephone, numrestau);
+        Reservation reservation = new Reservation(nom, prenom, nbpers, telephone, numrestau, date);
         try {
             reservation.save(bd);
         } catch (SQLException e) {
