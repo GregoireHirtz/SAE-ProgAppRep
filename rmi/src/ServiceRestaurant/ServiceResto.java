@@ -9,12 +9,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.sql.Date;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.TreeMap;
 
 public class ServiceResto extends RemoteServer implements ServiceRestaurant {
 
