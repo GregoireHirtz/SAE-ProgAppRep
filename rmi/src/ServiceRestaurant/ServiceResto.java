@@ -61,9 +61,6 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
 
     @Override
     public void reserverTable(String nom, String prenom, int nbpers, String telephone, int numrestau, Date date) throws RemoteException, RuntimeException {
-        //TODO
-        //Date de réservation & vérification de l'unicité des tâches
-        //Sûrement à faire directement dans la méthode save
         Reservation reservation = new Reservation(nom, prenom, nbpers, telephone, numrestau, date);
         try {
             reservation.save(bd);
