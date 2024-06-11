@@ -13,6 +13,11 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class ApiController implements HttpHandler {
+    private final String address;
+
+    public ApiController(String address) {
+        this.address = address;
+    }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -36,10 +41,10 @@ public class ApiController implements HttpHandler {
         else if (path.startsWith("/restaurants")) {
             String[] args = path.split("/");
             if (args.length == 3) {
-                response = objectMapper.readValue(ApiService.getRestaurant(Integer.parseInt(args[2])), HashMap.class);
+                response = objectMapper.readValue(ApiService.getInstance(this.address).getRestaurant(Integer.parseInt(args[2])), HashMap.class);
             }
             else if (args.length == 2) {
-                response = objectMapper.readValue(ApiService.getRestaurants(), new TypeReference<List<HashMap>>() {});            }
+                response = objectMapper.readValue(ApiService.getInstance(this.address).getRestaurants(), new TypeReference<List<HashMap>>() {});            }
             else {
                 response = objectMapper.readValue("{\"error\":\"Invalid path or arguments\"}", HashMap.class);
             }
@@ -93,7 +98,7 @@ public class ApiController implements HttpHandler {
                 String telephone = (String) reservation.get("telephone");
                 int numrestau = restaurantId;
                 Date date = Date.valueOf((String) reservation.get("date"));
-                ApiService.reserverTable(nom, prenom, nbpers, telephone, numrestau, date);
+                ApiService.getInstance(this.address).reserverTable(nom, prenom, nbpers, telephone, numrestau, date);
             } catch (Exception e) {
                 response.put("error", e.getMessage());
                 exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
