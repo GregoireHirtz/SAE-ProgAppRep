@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS commande;
+DROP TABLE IF EXISTS tabl;
 DROP TABLE IF EXISTS reservation;
 DROP TABLE IF EXISTS restaurant;
 DROP TABLE IF EXISTS plat;
@@ -19,10 +20,17 @@ CREATE TABLE reservation (
 CREATE TABLE restaurant (
     numrestau INT(4) AUTO_INCREMENT,
     nom VARCHAR(32),
-    nbPlace INT(3),
     latitude DOUBLE,
     longitude DOUBLE,
     PRIMARY KEY (numrestau)
+);
+
+-- Table tabl
+CREATE TABLE tabl (
+    numtab INT(4) AUTO_INCREMENT,
+    nbplace INT(2),
+    numrestau INT(4),
+    PRIMARY KEY(numtab)
 );
 
 -- Table plat
@@ -63,11 +71,11 @@ ALTER TABLE commande
 
 
 -- Insère quelques restaurants
-INSERT INTO restaurant (nom, nbPlace, latitude, longitude) VALUES
-    ('Le Petit Parisien', 10, 48.8566, 2.3522), -- Paris
-    ('The London Pub', 12, 51.5074, -0.1278), -- Londres
-    ('La Bella Italia', 2, 41.9028, 12.4964), -- Rome
-    ('Tokyo Sushi House', 8, 35.6895, 139.6917); -- Tokyo
+INSERT INTO restaurant (nom, latitude, longitude) VALUES
+    ('Le Petit Parisien', 48.8566, 2.3522), -- Paris
+    ('The London Pub', 51.5074, -0.1278), -- Londres
+    ('La Bella Italia', 41.9028, 12.4964), -- Rome
+    ('Tokyo Sushi House', 35.6895, 139.6917); -- Tokyo
 
 
 -- Insère quelques restaurants
@@ -120,4 +128,19 @@ VALUES
     (103, 9, 2),
     (103, 14, 2),
     (103, 2, 1),
-    (103, 3, 1)
+    (103, 3, 1);
+
+
+ALTER TABLE tabl AUTO_INCREMENT = 10;
+INSERT INTO tabl (nbplace, numrestau)
+VALUES
+    (4, 1),
+    (6, 1),
+    (8, 2),
+    (4, 2),
+    (6, 3),
+    (4, 3),
+    (4, 3),
+    (6, 4),
+    (2, 4),
+    (4, 4);
