@@ -12,40 +12,42 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 public class ServiceResto extends RemoteServer implements ServiceRestaurant {
 
     Bd bd;
     private ArrayList<Restaurant> restaurants;
-    private String lastUpdate = "";
+    private HashMap<Integer, Restaurant> restaurantHashMap;
 
     ServiceResto(Bd bd) {
         this.bd = bd;
     }
 
     public String getRestaurant(int index) throws RemoteException, RuntimeException {
-        return "";
+        if(Restaurant.haveUpdated(bd)) {
+            getRestaurants();
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(restaurantHashMap.get(index));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error while processing JSON");
+        }
     }
     @Override
     public String getRestaurants() throws RemoteException, RuntimeException {
-
-        String[] splittedDbName = bd.url.split("/");
-        String databaseName = splittedDbName[splittedDbName.length -1];
-        String tableName = "restaurant";
-
-        String updateTimeQuery = "SELECT update_time FROM information_schema.tables " +
-                "WHERE table_schema = ? " +
-                "AND table_name = ?";
-
         try {
-            ResultSet resultSet = bd.executeQuery(updateTimeQuery, databaseName, tableName);
-            resultSet.next();
-            String lastUpdate = resultSet.getString(1);
-            resultSet.close();
-            if(lastUpdate == null || !lastUpdate.equals(this.lastUpdate)) {
-                this.lastUpdate = lastUpdate;
+            if(Restaurant.haveUpdated(bd)) {
                 this.restaurants = Restaurant.getAll(bd);
+                this.restaurantHashMap = new HashMap<>();
+                for (Restaurant restaurant : restaurants) {
+                    restaurantHashMap.put(restaurant.getNumrestau(), restaurant);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
