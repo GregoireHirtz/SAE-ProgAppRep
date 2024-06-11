@@ -31,13 +31,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             getRestaurants();
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(restaurantHashMap.get(index));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error while processing JSON");
-        }
+        return getJson(restaurantHashMap.get(index));
     }
     @Override
     public String getRestaurants() throws RemoteException, RuntimeException {
@@ -54,29 +48,17 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             throw new RuntimeException("Error while retrieving data, DB might be down");
         }
 
+        return getJson(this.restaurants);
+    }
+
+    public static String getJson(Object object) throws RuntimeException {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.writeValueAsString(this.restaurants);
+            return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             throw new RuntimeException("Error while processing JSON");
         }
-    }
-
-    public static void main (String[] args) throws SQLException, RemoteException {
-        String url = "jdbc:mariadb://localhost:3306/miaam";
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Connexion à la base de donnée :");
-        System.out.print("-Utilisateur: ");
-        String user = sc.nextLine();
-        System.out.print("-Mot de passe: ");
-        String password = sc.nextLine();
-
-        //---Connexion à la base de donnée
-        Bd bd = new Bd(url, user, password);
-
-        ServiceResto resto = new ServiceResto(bd);
-        System.out.println(resto.getRestaurants());
     }
 
     @Override
@@ -91,6 +73,23 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             e.printStackTrace();
             throw new RuntimeException("Erreur au moment de réserver la table :" + e.getMessage());
         }
+    }
 
+    // Main for testing the return values of the service
+    public static void main (String[] args) throws SQLException, RemoteException {
+        String url = "jdbc:mariadb://localhost:3306/miaam";
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Connexion à la base de donnée :");
+        System.out.print("-Utilisateur: ");
+        String user = sc.nextLine();
+        System.out.print("-Mot de passe: ");
+        String password = sc.nextLine();
+
+        //---Connexion à la base de donnée
+        Bd bd = new Bd(url, user, password);
+
+        ServiceResto resto = new ServiceResto(bd);
+        System.out.println(resto.getRestaurants());
+        System.out.println(resto.getRestaurant(1));
     }
 }
