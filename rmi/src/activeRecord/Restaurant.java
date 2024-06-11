@@ -112,4 +112,36 @@ public class Restaurant implements ActiveRecord{
         }
         return  restaurants;
     }
+
+    public int getNumrestau() {
+        return numrestau;
+    }
+
+    public void setNumrestau(int numrestau) {
+        this.numrestau = numrestau;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
 }

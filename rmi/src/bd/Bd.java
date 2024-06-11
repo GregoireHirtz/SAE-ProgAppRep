@@ -5,11 +5,14 @@ import java.sql.*;
 public class Bd {
 
     private Connection connection;
+    public final String url, username;
 
     public Bd(String url, String username, String password) throws SQLException{
         if (url==null || username==null || password==null) throw new NullPointerException("aucun paramètre ne doit être null");
 
         this.connection = DriverManager.getConnection(url, username, password);
+        this.url = url;
+        this.username = username;
     }
 
     /**
