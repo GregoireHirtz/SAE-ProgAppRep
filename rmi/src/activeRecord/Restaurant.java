@@ -11,7 +11,6 @@ public class Restaurant implements ActiveRecord{
     private int numrestau;
     private String nom;
     private Double latitude, longitude;
-    private static String lastUpdate = "";
 
     public Restaurant(String nom, Double latitude, Double longitude) {
         if (nom==null || nom=="")
@@ -25,7 +24,7 @@ public class Restaurant implements ActiveRecord{
         this.longitude = longitude;
     }
 
-    private Restaurant(int numrestau, String nom, Double latitude, Double longitude) {
+    protected Restaurant(int numrestau, String nom, Double latitude, Double longitude) {
         this.numrestau = numrestau;
         this.nom = nom;
         this.latitude = latitude;
@@ -92,33 +91,6 @@ public class Restaurant implements ActiveRecord{
             requete = "DELETE FROM restaurant WHERE numrestau = ?";
             bd.executeQuery(requete, this.numrestau);
         }catch (SQLException e){}
-    }
-
-    public static boolean haveUpdated(Bd bd) {
-        String[] splittedDbName = bd.url.split("/");
-        String databaseName = splittedDbName[splittedDbName.length -1];
-        String tableName = "restaurant";
-
-        String updateTimeQuery = "SELECT update_time FROM information_schema.tables " +
-                "WHERE table_schema = ? " +
-                "AND table_name = ?";
-
-        try {
-            ResultSet resultSet = bd.executeQuery(updateTimeQuery, databaseName, tableName);
-            resultSet.next();
-            String lastUpdate = resultSet.getString(1);
-            resultSet.close();
-            if(Restaurant.lastUpdate == null || !Restaurant.lastUpdate.equals(lastUpdate)) {
-                Restaurant.lastUpdate = lastUpdate;
-                return true;
-            }
-            else {
-                return false;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error while retrieving data, DB might be down");
-        }
     }
 
     public String toString(){

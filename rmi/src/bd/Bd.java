@@ -1,11 +1,15 @@
 package bd;
 
+import activeRecord.Restaurant;
+
 import java.sql.*;
+import java.util.HashMap;
 
 public class Bd {
 
     private Connection connection;
     public final String url, username;
+    private HashMap<String, String> updates = new HashMap<>();
 
     public Bd(String url, String username, String password) throws SQLException{
         if (url==null || username==null || password==null) throw new NullPointerException("aucun paramètre ne doit être null");
@@ -45,6 +49,55 @@ public class Bd {
         else {
             ResultSet rs = statement.executeQuery();
             return rs;
+        }
+    }
+
+    public boolean haveUpdate(String tableName) {
+        String[] splittedDbName = url.split("/");
+        String databaseName = splittedDbName[splittedDbName.length -1];
+
+        String updateTimeQuery = "SELECT update_time FROM information_schema.tables " +
+                "WHERE table_schema = ? " +
+                "AND table_name = ?";
+
+        return getUpdate(updateTimeQuery, databaseName, tableName);
+    }
+
+    public boolean haveUpdate() {
+        String[] splittedDbName = url.split("/");
+        String databaseName = splittedDbName[splittedDbName.length -1];
+
+        String updateTimeQuery = "SELECT update_time FROM information_schema.tables " +
+                "WHERE table_schema = ? ";
+
+        return getUpdate(updateTimeQuery, databaseName, "any");
+    }
+
+    private boolean getUpdate(String query, String databaseName, String tableName) throws RuntimeException {
+        try {
+            ResultSet resultSet;
+            if(query.chars().filter(ch -> ch == '?').count() == 1) {
+                resultSet = executeQuery(query, databaseName);
+            }
+            else {
+                resultSet = executeQuery(query, databaseName, tableName);
+            }
+            resultSet.next();
+            String lastUpdate = resultSet.getString(1);
+            resultSet.close();
+
+            String myLastUpdate = updates.get(tableName);
+
+            if(myLastUpdate == null || !myLastUpdate.equals(lastUpdate)) {
+                updates.put(tableName, lastUpdate);
+                return true;
+            }
+            else {
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error while retrieving data, DB might be down");
         }
     }
 }

@@ -1,5 +1,6 @@
 package ServiceRestaurant;
 
+import activeRecord.Reservation;
 import bd.Bd;
 
 import java.net.InetAddress;
@@ -11,6 +12,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class LancerRestaurant {
     static int port = 1099;
@@ -28,7 +30,7 @@ public class LancerRestaurant {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
-    public static void main (String args[]) throws RemoteException, UnknownHostException, SQLException {
+    public static void main (String args[]) throws RemoteException, UnknownHostException, SQLException, InterruptedException {
 
         if (args.length > 0) {
             port = Integer.parseInt(args[0]);
@@ -63,8 +65,20 @@ public class LancerRestaurant {
             System.out.println("Création d'un nouvelle annuaire port [" + ANSI_CYAN + port + ANSI_RESET +"]");
         }
 
+        //Nettoyage de possible relicats
+        Reservation.nettoyerTickets(bd);
+
         //ajout du service a l'annuaire
         reg.rebind(nomService, service);
         System.out.println("Service créé, IP:" +  ANSI_CYAN + InetAddress.getLocalHost() + ANSI_RESET + " PORT:" + ANSI_CYAN + port + ANSI_RESET + " NOM:" + ANSI_CYAN + nomService + ANSI_RESET);
+
+        //Toutes les 15 minutes, vérifie la validité des tickets
+        while (true) {
+            TimeUnit.MINUTES.sleep(15);
+            Reservation.nettoyerTickets(bd);
+            //TODO :
+            // - Ajouter une colonne "date d'ajout" dans les réservation
+            // - Implémenter nettoyerTickets, qui supprime toutes les réservations sans nom/prénom/tel qui dates de plus de 15 minutes
+        }
     }
 }

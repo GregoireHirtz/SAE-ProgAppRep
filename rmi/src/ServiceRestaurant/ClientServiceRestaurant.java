@@ -40,6 +40,5 @@ public class ClientServiceRestaurant {
 
         //Utilisation du service
         serveur.getRestaurants();
-        serveur.reserverTable("Sardou", "Michel", 10, "06123456", 2, newDate);
     }
 }

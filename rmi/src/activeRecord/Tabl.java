@@ -72,4 +72,28 @@ public class Tabl implements ActiveRecord {
     public String toString() {
         return "Tabl ["+numtab + ": "+nbplace+" ("+numrestau+")]";
     }
+
+    public int getNumtab() {
+        return numtab;
+    }
+
+    public void setNumtab(int numtab) {
+        this.numtab = numtab;
+    }
+
+    public int getNbplace() {
+        return nbplace;
+    }
+
+    public void setNbplace(int nbplace) {
+        this.nbplace = nbplace;
+    }
+
+    public int getNumrestau() {
+        return numrestau;
+    }
+
+    public void setNumrestau(int numrestau) {
+        this.numrestau = numrestau;
+    }
 }
