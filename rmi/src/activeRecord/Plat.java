@@ -65,8 +65,12 @@ public class Plat implements ActiveRecord{
     }
 
     @Override
-    public void delete(Bd bd) {
+    public void delete(Bd bd) throws SQLException{
+        if (this.numplat <= 0)
+            throw new IllegalArgumentException("l'objet actuel n'est pas sauvegardé sur le bd");
 
+        String requete = "DELETE FROM plat WHERE numplat = ?";
+        ResultSet r = bd.executeQuery(requete, this.numplat);
     }
 
     public String toString(){

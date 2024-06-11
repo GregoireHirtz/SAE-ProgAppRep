@@ -13,6 +13,7 @@ public class Reservation implements ActiveRecord {
     private int nbpers;
     private String telephone;
     private int numrestau;
+    private Date date;
 
 
 
@@ -22,13 +23,14 @@ public class Reservation implements ActiveRecord {
         if (nbpers<=0)
             throw new IllegalArgumentException("nbpers <= 0");
 
-    // TODO pas de vérification que le numserv bien valide :  a faire
+    // TODO pas de vérification que le numrestau bien valide :  a faire
         this.numres = 0;
         this.nom = nom;
         this.prenom = prenom;
         this.nbpers = nbpers;
         this.telephone = telephone;
         this.numrestau = numrestau;
+        this.date = date;
     }
 
     private Reservation(int numres, String nom, String prenom, int nbpers, String telephone, int numrestau) {
@@ -74,6 +76,8 @@ public class Reservation implements ActiveRecord {
         if (bd == null) throw new IllegalArgumentException("La connexion ne peut pas être null");
 
         if (this.numres == 0) {
+            // verifie si reserv pas deja dans la bd
+
             String sql = "INSERT INTO reservation (nom, prenom, nbpers, telephone, numrestau) VALUES (?, ?, ?, ?, ?)";
             bd.executeQuery(sql);
         }
@@ -96,4 +100,7 @@ public class Reservation implements ActiveRecord {
     public String toString(){
         return "Réservation n°"+numres+" ("+this.nom+" "+this.prenom+" : "+this.nbpers+" "+this.telephone+" : "+this.numrestau+")";
     }
+
+
+
 }
