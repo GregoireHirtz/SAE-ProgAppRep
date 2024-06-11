@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -5,7 +6,9 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.sql.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -24,15 +27,27 @@ public class ApiController implements HttpHandler {
     }
 
     private void handleGetRequest(HttpExchange exchange, String path) throws IOException {
-        Map<String, String> response = new HashMap<>();
+        Object response;
+        ObjectMapper objectMapper = new ObjectMapper();
 
-        switch (path) {
-            case "/hello" -> response.put("message", "Hello, World!");
-            case "/restaurants" -> response.put("restaurants", "List of restaurants"); // TODO: Implement
-            default -> response.put("error", "Invalid path");
+        if (path.equals("/hello")) {
+            response = objectMapper.readValue("{\"message\":\"Hello, World!\"}", HashMap.class);
+        }
+        else if (path.startsWith("/restaurants")) {
+            String[] args = path.split("/");
+            if (args.length == 3) {
+                response = objectMapper.readValue(ApiService.getRestaurant(Integer.parseInt(args[2])), HashMap.class);
+            }
+            else if (args.length == 2) {
+                response = objectMapper.readValue(ApiService.getRestaurants(), new TypeReference<List<HashMap>>() {});            }
+            else {
+                response = objectMapper.readValue("{\"error\":\"Invalid path or arguments\"}", HashMap.class);
+            }
+        }
+        else {
+            response = objectMapper.readValue("{\"error\":\"Invalid path\"}", HashMap.class);
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(response);
 
         byte[] bytes = jsonString.getBytes(StandardCharsets.UTF_8);
@@ -70,9 +85,22 @@ public class ApiController implements HttpHandler {
             exchange.sendResponseHeaders(404, 0);
         } else {
             // Handle the request body as needed
-            // TODO
+            try {
+                HashMap reservation = new ObjectMapper().readValue(requestBody, HashMap.class);
+                String nom = (String) reservation.get("nom");
+                String prenom = (String) reservation.get("prenom");
+                int nbpers = (int) reservation.get("nbpers");
+                String telephone = (String) reservation.get("telephone");
+                int numrestau = restaurantId;
+                Date date = Date.valueOf((String) reservation.get("date"));
+                ApiService.reserverTable(nom, prenom, nbpers, telephone, numrestau, date);
+            } catch (Exception e) {
+                response.put("error", e.getMessage());
+                exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+                exchange.sendResponseHeaders(400, 0);
+            }
 
-            response.put("message", "Received POST request");
+            response.put("message", "Reservation created successfully");
             response.put("restaurantId", restaurantId);
             exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
             exchange.sendResponseHeaders(200, 0);
