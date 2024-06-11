@@ -83,6 +83,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             reservation.save(bd);
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("Erreur au moment de réserver la table :" + e.getMessage());
         }
 
     }
