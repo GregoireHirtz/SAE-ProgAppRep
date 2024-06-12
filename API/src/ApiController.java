@@ -100,13 +100,16 @@ public class ApiController implements HttpHandler {
             try {
                 String[] args = path.split("/");
                 HashMap reservation = new ObjectMapper().readValue(requestBody, HashMap.class);
+                // S'il y a 3 arguments, c'est-à-dire /tables/{numrestau}
                 if (args.length == 3) {
                     int numrestau = Integer.parseInt(args[2]);
                     int nbpers = (int) reservation.get("nbpers");
                     Date date = Date.valueOf((String) reservation.get("date"));
-                    ApiService.getInstance(this.address).bloquerTable(numrestau, date, nbpers);
-                    // TODO: Send the ticket to the client
+                    HashMap ticket = new ObjectMapper().readValue(ApiService.getInstance(this.address).bloquerTable(numrestau, date, nbpers), HashMap.class);
+                    // On renvoie le ticket de réservation au client
+                    response.put("ticket", ticket);
                 }
+                // S'il y a 2 arguments, c'est-à-dire /tables
                 else if (args.length == 2) {
                     String nom = (String) reservation.get("nom");
                     String prenom = (String) reservation.get("prenom");

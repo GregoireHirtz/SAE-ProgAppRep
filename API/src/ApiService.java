@@ -19,4 +19,7 @@ public class ApiService {
         }
         return instance;
     }
+
+    private ApiService() {
+    }
 }
