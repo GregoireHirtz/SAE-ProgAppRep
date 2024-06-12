@@ -49,6 +49,18 @@ public class ApiController implements HttpHandler {
                 response = objectMapper.readValue("{\"error\":\"Invalid path or arguments\"}", HashMap.class);
             }
         }
+        else if (path.startsWith("/tables")) {
+            String[] args = path.split("/");
+            if (args.length == 3) {
+                response = objectMapper.readValue(ApiService.getInstance(this.address).getTableRestaurant(Integer.parseInt(args[2])), HashMap.class);
+            }
+            else if (args.length == 4) {
+                response = objectMapper.readValue(ApiService.getInstance(this.address).getTableLibreRestaurant(Integer.parseInt(args[2]), Date.valueOf(args[3])), HashMap.class);
+            }
+            else {
+                response = objectMapper.readValue("{\"error\":\"Invalid path or arguments\"}", HashMap.class);
+            }
+        }
         else {
             response = objectMapper.readValue("{\"error\":\"Invalid path\"}", HashMap.class);
         }
@@ -72,44 +84,57 @@ public class ApiController implements HttpHandler {
         // Read the request body
         Scanner scanner = new Scanner(exchange.getRequestBody()).useDelimiter("\\A");
         String requestBody = scanner.hasNext() ? scanner.next() : "";
+        Map<String, Object> response = new HashMap<>();
 
         // Handle the path
         int restaurantId = -1;
-        if (path.startsWith("/restaurants")) {
+        if (path.startsWith("/tables")) {
             String[] args = path.split("/");
 
             if (args.length == 3) {
                 restaurantId = Integer.parseInt(args[2]);
             }
-        }
-
-        Map<String, Object> response = new HashMap<>();
-        if (restaurantId == -1) {
-            response.put("error", "Invalid path or arguments");
-            exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-            exchange.sendResponseHeaders(404, 0);
-        } else {
-            // Handle the request body as needed
-            try {
-                HashMap reservation = new ObjectMapper().readValue(requestBody, HashMap.class);
-                String nom = (String) reservation.get("nom");
-                String prenom = (String) reservation.get("prenom");
-                int nbpers = (int) reservation.get("nbpers");
-                String telephone = (String) reservation.get("telephone");
-                int numrestau = restaurantId;
-                Date date = Date.valueOf((String) reservation.get("date"));
-                ApiService.getInstance(this.address).reserverTable(nom, prenom, nbpers, telephone, numrestau, date);
-            } catch (Exception e) {
-                response.put("error", e.getMessage());
+            else {
+                response.put("error", "Invalid path or arguments");
                 exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-                exchange.sendResponseHeaders(400, 0);
+                exchange.sendResponseHeaders(404, 0);
             }
 
-            response.put("message", "Reservation created successfully");
-            response.put("restaurantId", restaurantId);
-            exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-            exchange.sendResponseHeaders(200, 0);
+            if (restaurantId == -1) {
+                response.put("error", "Invalid path or arguments");
+                exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+                exchange.sendResponseHeaders(404, 0);
+            } else {
+                // Handle the request body as needed
+                try {
+                    HashMap reservation = new ObjectMapper().readValue(requestBody, HashMap.class);
+                    String nom = (String) reservation.get("nom");
+                    String prenom = (String) reservation.get("prenom");
+                    int nbpers = (int) reservation.get("nbpers");
+                    String telephone = (String) reservation.get("telephone");
+                    int numrestau = restaurantId;
+                    Date date = Date.valueOf((String) reservation.get("date"));
+                    ApiService.getInstance(this.address).reserverTable(nom, prenom, nbpers, telephone, numrestau, date);
+                } catch (Exception e) {
+                    response.put("error", e.getMessage());
+                    exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+                    exchange.sendResponseHeaders(400, 0);
+                }
+
+                response.put("message", "Reservation created successfully");
+                response.put("restaurantId", restaurantId);
+                exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+                exchange.sendResponseHeaders(200, 0);
+            }
         }
+        else {
+            response.put("error", "Invalid path");
+            exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+            exchange.sendResponseHeaders(404, 0);
+        }
+
+
+
 
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(response);
