@@ -61,6 +61,15 @@ public class ApiController implements HttpHandler {
                 response = objectMapper.readValue("{\"error\":\"Invalid path or arguments\"}", HashMap.class);
             }
         }
+        else if (path.startsWith("/plats")) {
+            String[] args = path.split("/");
+            if (args.length == 3) {
+                response = objectMapper.readValue(ApiService.getInstance(this.address).getPlatsRestaurant(Integer.parseInt(args[2])), HashMap.class);
+            }
+            else {
+                response = objectMapper.readValue("{\"error\":\"Invalid path or arguments\"}", HashMap.class);
+            }
+        }
         else {
             response = objectMapper.readValue("{\"error\":\"Invalid path\"}", HashMap.class);
         }
@@ -87,44 +96,33 @@ public class ApiController implements HttpHandler {
         Map<String, Object> response = new HashMap<>();
 
         // Handle the path
-        int restaurantId = -1;
         if (path.startsWith("/tables")) {
-            String[] args = path.split("/");
-
-            if (args.length == 3) {
-                restaurantId = Integer.parseInt(args[2]);
-            }
-            else {
-                response.put("error", "Invalid path or arguments");
-                exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-                exchange.sendResponseHeaders(404, 0);
-            }
-
-            if (restaurantId == -1) {
-                response.put("error", "Invalid path or arguments");
-                exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-                exchange.sendResponseHeaders(404, 0);
-            } else {
-                // Handle the request body as needed
-                try {
-                    HashMap reservation = new ObjectMapper().readValue(requestBody, HashMap.class);
+            try {
+                String[] args = path.split("/");
+                HashMap reservation = new ObjectMapper().readValue(requestBody, HashMap.class);
+                if (args.length == 3) {
+                    int numrestau = Integer.parseInt(args[2]);
+                    int nbpers = (int) reservation.get("nbpers");
+                    Date date = Date.valueOf((String) reservation.get("date"));
+                    ApiService.getInstance(this.address).bloquerTable(numrestau, date, nbpers);
+                    // TODO: Send the ticket to the client
+                }
+                else if (args.length == 2) {
                     String nom = (String) reservation.get("nom");
                     String prenom = (String) reservation.get("prenom");
-                    int nbpers = (int) reservation.get("nbpers");
                     String telephone = (String) reservation.get("telephone");
-                    int numrestau = restaurantId;
-                    Date date = Date.valueOf((String) reservation.get("date"));
-                    ApiService.getInstance(this.address).reserverTable(nom, prenom, nbpers, telephone, numrestau, date);
-                } catch (Exception e) {
-                    response.put("error", e.getMessage());
-                    exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-                    exchange.sendResponseHeaders(400, 0);
+                    String ticket = new ObjectMapper().writeValueAsString(reservation.get("ticket"));
+                    ApiService.getInstance(this.address).reserverTable(nom, prenom, telephone, ticket);
                 }
-
-                response.put("message", "Reservation created successfully");
-                response.put("restaurantId", restaurantId);
+                else {
+                    response.put("error", "Invalid path or arguments");
+                    exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+                    exchange.sendResponseHeaders(404, 0);
+                }
+            } catch (Exception e) {
+                response.put("error", e.getMessage());
                 exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-                exchange.sendResponseHeaders(200, 0);
+                exchange.sendResponseHeaders(400, 0);
             }
         }
         else {
@@ -132,9 +130,6 @@ public class ApiController implements HttpHandler {
             exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
             exchange.sendResponseHeaders(404, 0);
         }
-
-
-
 
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(response);
