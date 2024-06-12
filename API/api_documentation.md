@@ -63,7 +63,7 @@
 }
 ```
 
-### Résultat:
+### Résultat (le ticket) :
 ```json
 {
   "numres":"1",
