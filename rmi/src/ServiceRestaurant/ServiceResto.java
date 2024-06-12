@@ -72,6 +72,24 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
     }
 
     /**
+     * Méthode pour récupérer tous les plats d'un restaurant
+     * @param indexRestaurant l'index du restaurant pour lequel on veut récupérer les plats
+     * @return Un string Json contenant tous les objets plat
+     * @throws RemoteException En cas d'erreur RMI
+     * @throws RuntimeException Pour toute autre erreur liée au code
+     */
+    public String getPlatsRestaurant(int indexRestaurant) throws RemoteException, RuntimeException {
+        getRestaurants();
+
+        try {
+            return getJson(restaurantHashMap.get(indexRestaurant).getPlats(bd));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error while retrieving data, DB might be down");
+        }
+    }
+
+    /**
      * Méthode pour récupérer toutes les tables d'un restaurant
      * @param indexRestaurant l'index du restaurant pour lequel on veut récupérer les tables
      * @return Un string Json contenant tous les objets Tables
