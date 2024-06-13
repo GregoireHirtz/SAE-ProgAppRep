@@ -5,7 +5,6 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.util.HashMap;
@@ -42,10 +41,10 @@ public class ApiController implements HttpHandler {
         else if (path.startsWith("/restaurants")) {
             String[] args = path.split("/");
             if (args.length == 3) {
-                response = objectMapper.readValue(ApiService.getInstance(this.address).getRestaurant(Integer.parseInt(args[2])), HashMap.class);
+                response = objectMapper.readValue(RmiServiceRestaurant.getInstance(this.address).getRestaurant(Integer.parseInt(args[2])), HashMap.class);
             }
             else if (args.length == 2) {
-                response = objectMapper.readValue(ApiService.getInstance(this.address).getRestaurants(), new TypeReference<List<HashMap>>() {});
+                response = objectMapper.readValue(RmiServiceRestaurant.getInstance(this.address).getRestaurants(), new TypeReference<List<HashMap>>() {});
             }
             else {
                 response = objectMapper.readValue("{\"error\":\"Invalid path or arguments\"}", HashMap.class);
@@ -54,10 +53,10 @@ public class ApiController implements HttpHandler {
         else if (path.startsWith("/tables")) {
             String[] args = path.split("/");
             if (args.length == 3) {
-                response = objectMapper.readValue(ApiService.getInstance(this.address).getTablesRestaurant(Integer.parseInt(args[2])), new TypeReference<List<HashMap>>() {});
+                response = objectMapper.readValue(RmiServiceRestaurant.getInstance(this.address).getTablesRestaurant(Integer.parseInt(args[2])), new TypeReference<List<HashMap>>() {});
             }
             else if (args.length == 4) {
-                response = objectMapper.readValue(ApiService.getInstance(this.address).getTablesLibreRestaurant(Integer.parseInt(args[2]), Date.valueOf(args[3])), new TypeReference<List<HashMap>>() {});
+                response = objectMapper.readValue(RmiServiceRestaurant.getInstance(this.address).getTablesLibreRestaurant(Integer.parseInt(args[2]), Date.valueOf(args[3])), new TypeReference<List<HashMap>>() {});
             }
             else {
                 response = objectMapper.readValue("{\"error\":\"Invalid path or arguments\"}", HashMap.class);
@@ -66,7 +65,7 @@ public class ApiController implements HttpHandler {
         else if (path.startsWith("/plats")) {
             String[] args = path.split("/");
             if (args.length == 3) {
-                response = objectMapper.readValue(ApiService.getInstance(this.address).getMenuRestaurant(Integer.parseInt(args[2])), new TypeReference<List<HashMap>>() {});
+                response = objectMapper.readValue(RmiServiceRestaurant.getInstance(this.address).getMenuRestaurant(Integer.parseInt(args[2])), new TypeReference<List<HashMap>>() {});
             }
             else {
                 response = objectMapper.readValue("{\"error\":\"Invalid path or arguments\"}", HashMap.class);
@@ -75,7 +74,7 @@ public class ApiController implements HttpHandler {
         else if (path.equals("/hazards")) {
             response = objectMapper.readValue("{\"error\":\"Failed to get hazards\"}", HashMap.class);
             try {
-                response = objectMapper.readValue(ApiService.getHazards(), new TypeReference<List<HashMap>>() {});
+                response = objectMapper.readValue(RmiServiceHazards.getInstance(this.address).getHazards(), new TypeReference<List<HashMap>>() {});
             } catch (Exception e) {
                 e.printStackTrace();
 
@@ -116,7 +115,7 @@ public class ApiController implements HttpHandler {
                     int numrestau = Integer.parseInt(args[2]);
                     int nbpers = (int) reservation.get("nbpers");
                     Date date = Date.valueOf((String) reservation.get("date"));
-                    String tableData = ApiService.getInstance(this.address).bloquerTable(numrestau, date, nbpers);
+                    String tableData = RmiServiceRestaurant.getInstance(this.address).bloquerTable(numrestau, date, nbpers);
                     HashMap ticket;
                     if (tableData != null && !tableData.isEmpty()) {
                         ticket = new ObjectMapper().readValue(tableData, HashMap.class);
@@ -143,7 +142,7 @@ public class ApiController implements HttpHandler {
                     if (ticketObj != null) {
                         ticket = new ObjectMapper().writeValueAsString(ticketObj);
                     }
-                    ApiService.getInstance(this.address).reserverTable(nom, prenom, telephone, ticket);
+                    RmiServiceRestaurant.getInstance(this.address).reserverTable(nom, prenom, telephone, ticket);
                     exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
                     exchange.sendResponseHeaders(200, 0);
 
