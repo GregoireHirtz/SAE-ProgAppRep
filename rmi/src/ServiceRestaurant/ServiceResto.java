@@ -78,7 +78,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
      * @throws RemoteException En cas d'erreur RMI
      * @throws RuntimeException Pour toute autre erreur liée au code
      */
-    public String getPlatsRestaurant(int indexRestaurant) throws RemoteException, RuntimeException {
+    public String getMenuRestaurant(int indexRestaurant) throws RemoteException, RuntimeException {
         getRestaurants();
 
         try {

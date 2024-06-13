@@ -8,7 +8,7 @@ public interface ServiceRestaurant extends Remote {
 
    String getRestaurants() throws RemoteException, RuntimeException;
    String getRestaurant(int index) throws RemoteException, RuntimeException;
-   String getPlatsRestaurant(int indexRestaurant) throws RemoteException, RuntimeException;
+   String getMenuRestaurant(int indexRestaurant) throws RemoteException, RuntimeException;
    String getTableRestaurant(int indexRestaurant) throws RemoteException, RuntimeException;
    String getTableLibreRestaurant(int indexRestaurant, Date date) throws RemoteException, RuntimeException;
    String bloquerTable(int indexRestaurant, Date date, int nbPersonnes) throws RemoteException, RuntimeException;
