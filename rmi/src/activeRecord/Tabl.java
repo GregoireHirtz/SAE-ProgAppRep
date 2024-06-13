@@ -41,6 +41,12 @@ public class Tabl implements ActiveRecord {
         }
     }
 
+    public Tabl(int numtab, int nbplace, int numrestau) {
+        this.numtab = numtab;
+        this.nbplace = nbplace;
+        this.numrestau = numrestau;
+    }
+
 
     @Override
     public void save(Bd bd) throws SQLException {

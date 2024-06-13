@@ -2,6 +2,7 @@ package activeRecord;
 
 import bd.Bd;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public class Restaurant implements ActiveRecord{
     private Double latitude, longitude;
 
     public Restaurant(String nom, Double latitude, Double longitude) {
-        if (nom==null || nom=="")
+        if (nom==null || nom.equals(""))
             throw new IllegalArgumentException("Le nom ne peut etre null ou vide \"\"");
         if (latitude==null || longitude==null)
             throw new IllegalArgumentException("La latitude, ni la longitude ne peut etre null");
@@ -53,7 +54,7 @@ public class Restaurant implements ActiveRecord{
 
 
     @Override
-    public void save(Bd bd) throws SQLException {
+    public void save(Bd bd) {
         if (bd == null) throw new IllegalArgumentException("La connexion ne peut pas être null");
 
         // insertion nouveau restaurant
@@ -77,7 +78,7 @@ public class Restaurant implements ActiveRecord{
     }
 
     @Override
-    public void delete(Bd bd) throws SQLException {
+    public void delete(Bd bd) {
         if (this.numrestau <= 0)
             throw new IllegalArgumentException("l'objet actuel n'est pas sauvegardé sur le bd");
 
@@ -107,7 +108,7 @@ public class Restaurant implements ActiveRecord{
         String requete = "SELECT * FROM restaurant";
 
         ResultSet r = bd.executeQuery(requete);
-        ArrayList<Restaurant> restaurants= new ArrayList<Restaurant>();
+        ArrayList<Restaurant> restaurants= new ArrayList<>();
         while (r.next()){
             restaurants.add(new Restaurant(r.getInt("numrestau"), r.getString("nom"), r.getDouble("latitude"), r.getDouble("longitude")));
         }
@@ -147,7 +148,7 @@ public class Restaurant implements ActiveRecord{
     }
 
 
-    public List<Plat> getPlats(Bd bd)throws SQLException {
+    public List<Plat> getMenu(Bd bd)throws SQLException {
         if (bd == null)
             throw new IllegalArgumentException("bd == null");
 
@@ -165,12 +166,27 @@ public class Restaurant implements ActiveRecord{
         if (bd == null)
             throw new IllegalArgumentException("bd == null");
 
-        String requete = "SELECT * FROM tabl "; // A finir
+        String requete = "SELECT * FROM tabl WHERE numrestau == ?";
 
-        ResultSet r = bd.executeQuery(requete);
-        ArrayList<Tabl> Tables= new ArrayList<Tabl>();
+        ResultSet r = bd.executeQuery(requete, numrestau);
+        ArrayList<Tabl> Tables= new ArrayList<>();
         while (r.next()){
-            Tables.add(new Tabl(r.getInt("nbplace"), r.getInt("numRestau")));
+            Tables.add(new Tabl(r.getInt("numtab"), r.getInt("nbplace"), r.getInt("numRestau")));
+        }
+        return  Tables;
+    }
+
+    public List<Tabl> getTablesLibre(Bd bd, Date date) throws SQLException {
+        if (bd == null)
+            throw new IllegalArgumentException("bd == null");
+
+        String requete = "SELECT * FROM tabl WHERE numrestau == ? AND numtab not IN " +
+                "(SELECT numtab FROM reservation WHERE numrestau == ? AND date == ?)";
+
+        ResultSet r = bd.executeQuery(requete, numrestau, numrestau, date);
+        ArrayList<Tabl> Tables= new ArrayList<>();
+        while (r.next()){
+            Tables.add(new Tabl(r.getInt("numtab"), r.getInt("nbplace"), r.getInt("numRestau")));
         }
         return  Tables;
     }
