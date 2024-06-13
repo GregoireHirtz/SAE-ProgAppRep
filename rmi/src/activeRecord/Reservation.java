@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class Reservation implements ActiveRecord {
 
@@ -18,9 +19,7 @@ public class Reservation implements ActiveRecord {
     private Date dateajout;
     private int numtab;
 
-    public Reservation() {
-
-    }
+    public Reservation() {}
 
     public Reservation(String nom, String prenom, int nbpers, String telephone, int numrestau, Date date, Date dateajout, int numtab) {
         if (nom==null || prenom==null || telephone==null || date==null || dateajout==null)
@@ -94,6 +93,20 @@ public class Reservation implements ActiveRecord {
         try (Statement stmt = bd.getConnection().createStatement()) {
             stmt.execute(sql);
         }
+    }
+
+    public static ArrayList<Reservation> getAll(Bd bd) throws SQLException{
+        if (bd == null)
+            throw new IllegalArgumentException("bd == null");
+
+        String requete = "SELECT * FROM reservation";
+
+        ResultSet r = bd.executeQuery(requete);
+        ArrayList<Reservation> reservations= new ArrayList<>();
+        while (r.next()){
+            reservations.add(new Reservation(bd, r.getInt("numres")));
+        }
+        return  reservations;
     }
 
 
