@@ -51,24 +51,32 @@ CREATE TABLE commande (
     PRIMARY KEY(numres, numplat)
 );
 
-
+CREATE TABLE menu (
+    numrestau INT(4),
+    numplat INT(4),
+    PRIMARY KEY (numrestau, numplat)
+);
 
 ALTER TABLE reservation
     ADD CONSTRAINT fk_reservation_restaurant
         FOREIGN KEY (numrestau)
             REFERENCES restaurant(numrestau);
 
-
 ALTER TABLE commande
     ADD CONSTRAINT fk_commande_reservation
         FOREIGN KEY (numres)
-            REFERENCES reservation(numres);
-ALTER TABLE commande
+            REFERENCES reservation(numres),
     ADD CONSTRAINT fk_commande_plat
         FOREIGN KEY (numplat)
             REFERENCES plat(numplat);
 
-
+ALTER TABLE menu
+    ADD CONSTRAINT fk_menu_restaurant
+        FOREIGN KEY (numrestau)
+            REFERENCES restaurant(numrestau),
+    ADD CONSTRAINT fk_menu_plat
+        FOREIGN KEY (numplat)
+            REFERENCES plat(numplat);
 
 
 
@@ -82,11 +90,11 @@ INSERT INTO restaurant (nom, latitude, longitude) VALUES
 
 -- Insère quelques restaurants
 ALTER TABLE reservation AUTO_INCREMENT = 100;
-INSERT INTO reservation (nom, prenom, nbpers, telephone, date, dateajout, numrestau) VALUES
-    ('Doe', 'John', 2, '1234567890', '2024-06-15', '', 1), -- Réservation au Le Petit Parisien
-    ('Smith', 'Jane', 4, '9876543210', '2024-06-16', '', 2), -- Réservation au The London Pub
-    ('Garcia', 'Maria', 3, '4561237890', '2024-06-17', '', 3), -- Réservation à La Bella Italia
-    ('Sato', 'Takashi', 2, '7894561230', '2024-06-18', '', 4); -- Réservation au Tokyo Sushi House
+INSERT INTO reservation (nom, prenom, nbpers, telephone, date, numrestau) VALUES
+    ('Doe', 'John', 2, '1234567890', '2024-06-15', 1), -- Réservation au Le Petit Parisien
+    ('Smith', 'Jane', 4, '9876543210', '2024-06-16', 2), -- Réservation au The London Pub
+    ('Garcia', 'Maria', 3, '4561237890', '2024-06-17', 3), -- Réservation à La Bella Italia
+    ('Sato', 'Takashi', 2, '7894561230', '2024-06-18', 4); -- Réservation au Tokyo Sushi House
 
 
 -- Tuples de Plat
