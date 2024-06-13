@@ -5,6 +5,7 @@ import bd.Bd;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class Reservation implements ActiveRecord {
 
@@ -27,7 +28,6 @@ public class Reservation implements ActiveRecord {
         if (nbpers<=0||numtab<=0)
             throw new IllegalArgumentException("nbpers <= 0");
 
-    // TODO pas de vérification que le numrestau bien valide :  a faire
         this.numres = 0;
         this.nom = nom;
         this.prenom = prenom;
@@ -91,7 +91,9 @@ public class Reservation implements ActiveRecord {
 
     static public void nettoyerTickets(Bd bd) throws SQLException{
         String sql = "DELETE FROM reservation WHERE dateajout < NOW() - INTERVAL 15 MINUTE";
-        bd.executeQuery(sql);
+        try (Statement stmt = bd.getConnection().createStatement()) {
+            stmt.execute(sql);
+        }
     }
 
 

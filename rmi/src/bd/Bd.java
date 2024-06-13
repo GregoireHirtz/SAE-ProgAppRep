@@ -125,4 +125,9 @@ public class Bd {
             throw new RuntimeException("Error while retrieving data, DB might be down");
         }
     }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
 }

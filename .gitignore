@@ -2,3 +2,4 @@
 /out/
 *.class
 *.iml
+/rmi/src/META-INF/
