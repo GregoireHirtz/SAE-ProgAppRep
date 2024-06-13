@@ -272,6 +272,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         try {
             Reservation reservation = objectMapper.readValue(ticket, Reservation.class);
 
+            System.out.println(reservation);
             if(reservation.getDateajout() == null) {
                 throw new RuntimeException("Invalid ticket");
             }
