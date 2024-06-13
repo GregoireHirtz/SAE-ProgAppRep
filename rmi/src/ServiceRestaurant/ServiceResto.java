@@ -217,7 +217,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         if(nbPersonnes <= 0) {
             throw new RuntimeException("nbPersonnes <= 0");
         }
-        
+
         try {
             bd.lockTables("reservation", "restaurant", "tabl");
             String json_tablesLibre = getTablesLibreRestaurant(indexRestaurant, date);
@@ -272,7 +272,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         try {
             Reservation reservation = objectMapper.readValue(ticket, Reservation.class);
 
-            if(reservation.getDateajout() != null) {
+            if(reservation.getDateajout() == null) {
                 throw new RuntimeException("Invalid ticket");
             }
 
