@@ -15,7 +15,7 @@ import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class LancerRestaurant {
-    static int port = 1099;
+    static int port = 1659;
     static String nomService = "restaurants";
     static String url = "jdbc:mariadb://localhost:3306/miaam";
 

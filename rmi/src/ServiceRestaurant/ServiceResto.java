@@ -249,6 +249,6 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         reservation = resto.bloquerTable(1, Date.valueOf("2024-06-15"), 4);
         System.out.println(reservation);
         resto.reserverTable("Naigeon", "Adrien", "3630", reservation);
-        
+
     }
 }
