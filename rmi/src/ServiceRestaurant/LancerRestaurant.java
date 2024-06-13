@@ -72,13 +72,10 @@ public class LancerRestaurant {
         reg.rebind(nomService, service);
         System.out.println("Service créé, IP:" +  ANSI_CYAN + InetAddress.getLocalHost() + ANSI_RESET + " PORT:" + ANSI_CYAN + port + ANSI_RESET + " NOM:" + ANSI_CYAN + nomService + ANSI_RESET);
 
-        //Toutes les 15 minutes, vérifie la validité des tickets
+        //Toutes les minutes, vérifie la validité des tickets
         while (true) {
-            TimeUnit.MINUTES.sleep(15);
+            TimeUnit.MINUTES.sleep(1);
             Reservation.nettoyerTickets(bd);
-            //TODO :
-            // - Ajouter une colonne "date d'ajout" dans les réservation
-            // - Implémenter nettoyerTickets, qui supprime toutes les réservations sans nom/prénom/tel qui dates de plus de 15 minutes
         }
     }
 }
