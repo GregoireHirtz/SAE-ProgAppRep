@@ -5,6 +5,7 @@ import bd.Bd;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Restaurant implements ActiveRecord{
 
@@ -143,5 +144,34 @@ public class Restaurant implements ActiveRecord{
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+
+    public List<Plat> getPlats(Bd bd)throws SQLException {
+        if (bd == null)
+            throw new IllegalArgumentException("bd == null");
+
+        String requete = "SELECT * FROM plats p inner join commande c on p.numplat=c.numplat where "; // A finir
+
+        ResultSet r = bd.executeQuery(requete);
+        ArrayList<Plat> plats= new ArrayList<Plat>();
+        while (r.next()){
+            plats.add(new Plat(r.getString("libelle"), r.getString("type"), r.getDouble("prixunit")));
+        }
+        return  plats;
+    }
+
+    public List<Tabl> getTables(Bd bd)throws SQLException {
+        if (bd == null)
+            throw new IllegalArgumentException("bd == null");
+
+        String requete = "SELECT * FROM tabl "; // A finir
+
+        ResultSet r = bd.executeQuery(requete);
+        ArrayList<Tabl> Tables= new ArrayList<Tabl>();
+        while (r.next()){
+            Tables.add(new Tabl(r.getInt("nbplace"), r.getInt("numRestau")));
+        }
+        return  Tables;
     }
 }
