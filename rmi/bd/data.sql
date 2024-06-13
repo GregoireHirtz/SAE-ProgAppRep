@@ -88,16 +88,6 @@ INSERT INTO restaurant (nom, latitude, longitude) VALUES
     ('La Bella Italia', 41.9028, 12.4964), -- Rome
     ('Tokyo Sushi House', 35.6895, 139.6917); -- Tokyo
 
-
--- Insère quelques restaurants
-ALTER TABLE reservation AUTO_INCREMENT = 100;
-INSERT INTO reservation (nom, prenom, nbpers, telephone, date, numrestau) VALUES
-    ('Doe', 'John', 2, '1234567890', '2024-06-15', 1), -- Réservation au Le Petit Parisien
-    ('Smith', 'Jane', 4, '9876543210', '2024-06-16', 2), -- Réservation au The London Pub
-    ('Garcia', 'Maria', 3, '4561237890', '2024-06-17', 3), -- Réservation à La Bella Italia
-    ('Sato', 'Takashi', 2, '7894561230', '2024-06-18', 4); -- Réservation au Tokyo Sushi House
-
-
 -- Tuples de Plat
 INSERT INTO plat (libelle, type, prixunit)
 VALUES
@@ -117,29 +107,6 @@ VALUES
     ('munster au cumin', 'Fromage', 90),
     ('filet de sole au beurre', 'Poisson', 90),
     ('fois gras de lorraine', 'Entrée', 90);
-
-
-INSERT INTO commande (numres, numplat, quantite)
-VALUES
-    (100, 4, 2),
-    (100, 5, 2),
-    (100, 13, 1),
-    (100, 3, 1),
-    (101, 7, 2),
-    (101, 16, 2),
-    (101, 12, 2),
-    (101, 15, 2),
-    (101, 2, 2),
-    (101, 3, 2),
-    (102, 1, 2),
-    (102, 10, 2),
-    (102, 14, 2),
-    (102, 2, 1),
-    (102, 3, 1),
-    (103, 9, 2),
-    (103, 14, 2),
-    (103, 2, 1),
-    (103, 3, 1);
 
 
 ALTER TABLE tabl AUTO_INCREMENT = 10;
@@ -184,3 +151,32 @@ VALUES
     (4, 12), -- gigot d'agneau
     (4, 2);  -- tarte de saison
 
+-- Insère quelques réservations
+ALTER TABLE reservation AUTO_INCREMENT = 100;
+INSERT INTO reservation (nom, prenom, nbpers, telephone, date, numrestau, numtab) VALUES
+    ('Doe', 'John', 2, '1234567890', '2024-06-15', 1, 11), -- Réservation au Le Petit Parisien
+    ('Smith', 'Jane', 4, '9876543210', '2024-06-16', 2, 13), -- Réservation au The London Pub
+    ('Garcia', 'Maria', 3, '4561237890', '2024-06-17', 3, 15), -- Réservation à La Bella Italia
+    ('Sato', 'Takashi', 2, '7894561230', '2024-06-18', 4, 18); -- Réservation au Tokyo Sushi House
+
+INSERT INTO commande (numres, numplat, quantite)
+VALUES
+    (100, 4, 2),
+    (100, 5, 2),
+    (100, 13, 1),
+    (100, 3, 1),
+    (101, 7, 2),
+    (101, 16, 2),
+    (101, 12, 2),
+    (101, 15, 2),
+    (101, 2, 2),
+    (101, 3, 2),
+    (102, 1, 2),
+    (102, 10, 2),
+    (102, 14, 2),
+    (102, 2, 1),
+    (102, 3, 1),
+    (103, 9, 2),
+    (103, 14, 2),
+    (103, 2, 1),
+    (103, 3, 1);

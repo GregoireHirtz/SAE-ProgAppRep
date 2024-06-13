@@ -53,13 +53,28 @@ public class Bd {
     }
 
     public void lockTable(String tableName) throws SQLException {
-        String query = "LOCK TABLES ? WRITE";
-        executeQuery(query, tableName);
+        String query = "LOCK TABLES " + tableName + " WRITE";
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(query);
+        }
+    }
+
+    public void lockTables(String... tableNames) throws SQLException {
+        StringBuilder query = new StringBuilder("LOCK TABLES ");
+        for (String tableName : tableNames) {
+            query.append(tableName).append(" WRITE, ");
+        }
+        query.setLength(query.length() - 2);
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(query.toString());
+        }
     }
 
     public void unlockTable() throws SQLException {
         String query = "UNLOCK TABLES";
-        executeQuery(query);
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(query);
+        }
     }
 
     public boolean haveUpdate(String tableName) {

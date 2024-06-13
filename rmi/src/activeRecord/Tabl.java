@@ -12,6 +12,10 @@ public class Tabl implements ActiveRecord {
     private int nbplace;
     private int numrestau;
 
+    public Tabl () {
+
+    }
+
     public Tabl(int nbplace, int numrestau) {
         if (nbplace<=0 || numrestau<=0)
             throw new IllegalArgumentException("nbplace and numrestau must be greater than 0");

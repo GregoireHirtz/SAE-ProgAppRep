@@ -7,11 +7,16 @@ import bd.Bd;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.SqlDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -20,6 +25,15 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
 
     // ----------- static
     public static ObjectMapper objectMapper = new ObjectMapper();
+
+    static { // modification de la mise en forme des dates dans le Json
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Date.class, new SqlDateSerializer());
+        objectMapper.registerModule(module);
+    }
 
     // ----------- attributes
 
@@ -60,15 +74,15 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
 
     /**
      * Méthode pour récupérer un restaurant en particulier à partir d'un index
-     * @param index index du restaurant
+     * @param indexRestaurant index du restaurant
      * @return Un string Json contenant l'objet restaurant
      * @throws RemoteException En cas d'erreur RMI
      * @throws RuntimeException Pour toute autre erreur liée au code
      */
-    public String getRestaurant(int index) throws RemoteException, RuntimeException {
+    public String getRestaurant(int indexRestaurant) throws RemoteException, RuntimeException {
         getRestaurants();
 
-        return getJson(restaurantHashMap.get(index));
+        return getJson(restaurantHashMap.get(indexRestaurant));
     }
 
     /**
@@ -137,7 +151,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
      */
     public String bloquerTable(int indexRestaurant, Date date, int nbPersonnes) throws RemoteException, RuntimeException {
         try {
-            bd.lockTable("reservation");
+            bd.lockTables("reservation", "restaurant", "tabl");
             String json_tablesLibre = getTableLibreRestaurant(indexRestaurant, date);
             Tabl[] tables = objectMapper.readValue(json_tablesLibre, Tabl[].class);
             for(Tabl table : tables) {
@@ -227,5 +241,13 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         ServiceResto resto = new ServiceResto(bd);
         System.out.println(resto.getRestaurants());
         System.out.println(resto.getRestaurant(1));
+        System.out.println(resto.getMenuRestaurant(1));
+        System.out.println(resto.getTableRestaurant(1));
+        System.out.println(resto.getTableLibreRestaurant(1, Date.valueOf("2024-06-15")));
+        String reservation = resto.bloquerTable(1, Date.valueOf("2024-06-15"), 6);
+        System.out.println(reservation);
+        reservation = resto.bloquerTable(1, Date.valueOf("2024-06-15"), 4);
+        System.out.println(reservation);
+        resto.reserverTable("Naigeon", "Adrien", "3630", reservation);
     }
 }

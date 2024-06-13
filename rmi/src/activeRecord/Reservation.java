@@ -17,6 +17,10 @@ public class Reservation implements ActiveRecord {
     private Date dateajout;
     private int numtab;
 
+    public Reservation() {
+
+    }
+
     public Reservation(String nom, String prenom, int nbpers, String telephone, int numrestau, Date date, Date dateajout, int numtab) {
         if (nom==null || prenom==null || telephone==null || date==null || dateajout==null)
             throw new IllegalArgumentException("nom("+nom+"), prenom("+prenom+"), telephone("+telephone+") ou date("+date+") sont null");
@@ -67,7 +71,7 @@ public class Reservation implements ActiveRecord {
             // verifie si reserv pas deja dans la bd
 
             String sql = "INSERT INTO reservation (nom, prenom, nbpers, telephone, numrestau, date, dateajout, numtab) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            bd.executeQuery(sql, this.nom, this.prenom, this.nbpers, this.telephone, this.numrestau, this.numres, this.date, this.dateajout, this.numtab);
+            bd.executeQuery(sql, this.nom, this.prenom, this.nbpers, this.telephone, this.numrestau, this.date, this.dateajout, this.numtab);
         }
 
         else{

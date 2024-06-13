@@ -152,9 +152,10 @@ public class Restaurant implements ActiveRecord{
         if (bd == null)
             throw new IllegalArgumentException("bd == null");
 
-        String requete = "SELECT * FROM plats p inner join commande c on p.numplat=c.numplat where "; // A finir
+        String requete = "SELECT * FROM plat WHERE numplat in " +
+                "(SELECT numplat FROM menu WHERE numrestau = ?)";
 
-        ResultSet r = bd.executeQuery(requete);
+        ResultSet r = bd.executeQuery(requete, numrestau);
         ArrayList<Plat> plats= new ArrayList<Plat>();
         while (r.next()){
             plats.add(new Plat(r.getString("libelle"), r.getString("type"), r.getDouble("prixunit")));
@@ -166,7 +167,7 @@ public class Restaurant implements ActiveRecord{
         if (bd == null)
             throw new IllegalArgumentException("bd == null");
 
-        String requete = "SELECT * FROM tabl WHERE numrestau == ?";
+        String requete = "SELECT * FROM tabl WHERE numrestau = ?";
 
         ResultSet r = bd.executeQuery(requete, numrestau);
         ArrayList<Tabl> Tables= new ArrayList<>();
@@ -180,8 +181,8 @@ public class Restaurant implements ActiveRecord{
         if (bd == null)
             throw new IllegalArgumentException("bd == null");
 
-        String requete = "SELECT * FROM tabl WHERE numrestau == ? AND numtab not IN " +
-                "(SELECT numtab FROM reservation WHERE numrestau == ? AND date == ?)";
+        String requete = "SELECT * FROM tabl WHERE numrestau = ? AND numtab not IN " +
+                "(SELECT numtab FROM reservation WHERE numrestau = ? AND date = ?)";
 
         ResultSet r = bd.executeQuery(requete, numrestau, numrestau, date);
         ArrayList<Tabl> Tables= new ArrayList<>();
