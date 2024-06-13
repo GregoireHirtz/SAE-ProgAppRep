@@ -152,4 +152,20 @@ public class Reservation implements ActiveRecord {
     public void setDate(Date date) {
         this.date = date;
     }
+
+    public Date getDateajout() {
+        return dateajout;
+    }
+
+    public void setDateajout(Date dateajout) {
+        this.dateajout = dateajout;
+    }
+
+    public int getNumtab() {
+        return numtab;
+    }
+
+    public void setNumtab(int numtab) {
+        this.numtab = numtab;
+    }
 }

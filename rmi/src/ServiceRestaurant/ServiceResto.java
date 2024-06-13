@@ -177,6 +177,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
     public void reserverTable(String nom, String prenom, String telephone, String ticket) throws RemoteException, RuntimeException {
         try {
             Reservation reservation = objectMapper.readValue(ticket, Reservation.class);
+            reservation.setDateajout(null);
             reservation.setNom(nom);
             reservation.setPrenom(prenom);
             reservation.setTelephone(telephone);
