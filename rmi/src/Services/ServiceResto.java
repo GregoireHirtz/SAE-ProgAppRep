@@ -12,20 +12,27 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.SqlDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.ServerNotActiveException;
+import java.security.*;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class ServiceResto extends RemoteServer implements ServiceRestaurant {
 
     // ----------- static
-    public static ObjectMapper objectMapper = new ObjectMapper();
+    public static ObjectMapper objectMapper = new ObjectMapper(); // Objet pour générer les Json
 
     static { // modification de la mise en forme des dates dans le Json
         objectMapper.registerModule(new JavaTimeModule());
@@ -41,13 +48,19 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
     Bd bd;
     private ArrayList<Restaurant> restaurants;
     private HashMap<Integer, Restaurant> restaurantHashMap;
+    private transient KeyPair keys;
 
     /**
      * Constructeur du service
      * @param bd
      */
-    ServiceResto(Bd bd) {
+    ServiceResto(Bd bd) throws NoSuchAlgorithmException {
         this.bd = bd;
+
+        // Une nouvelle paire RSA est générée à chaque nouveau service
+        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+        generator.initialize(2048);
+        this.keys = generator.generateKeyPair();
     }
 
     /**
@@ -61,6 +74,10 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             System.out.println(LancerServices.ANSI_CYAN + getClientHost() + LancerServices.ANSI_RESET + ": getRestaurants");
             if(bd.haveUpdate("restaurant")) {
                 this.restaurants = Restaurant.getAll(bd);
+
+                // On sauvegarde les résultats dans une hashmap
+                // Pour que les méthodes utilisant 1 restaurant
+                // Soient rapides
                 this.restaurantHashMap = new HashMap<>();
                 for (Restaurant restaurant : restaurants) {
                     restaurantHashMap.put(restaurant.getNumrestau(), restaurant);
@@ -94,7 +111,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             throw new RuntimeException("indexRestaurant <= 0");
         }
 
-        getRestaurants();
+        getRestaurants(); // Mise à jour des données locales
 
         return getJson(restaurantHashMap.get(indexRestaurant));
     }
@@ -117,7 +134,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             throw new RuntimeException("indexRestaurant <= 0");
         }
 
-        getRestaurants();
+        getRestaurants(); // Mise à jour des données locales
 
         try {
             return getJson(restaurantHashMap.get(indexRestaurant).getMenu(bd));
@@ -146,7 +163,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             throw new RuntimeException("indexRestaurant <= 0");
         }
 
-        getRestaurants();
+        getRestaurants(); // Mise à jour des données locales
 
         try {
             return getJson(restaurantHashMap.get(indexRestaurant).getTables(bd));
@@ -175,7 +192,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             throw new RuntimeException("indexRestaurant <= 0");
         }
 
-        getRestaurants();
+        getRestaurants(); // Mise à jour des données locales
 
         try {
             return getJson(restaurantHashMap.get(indexRestaurant).getTablesLibre(bd, date));
@@ -186,7 +203,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
     }
 
     /**
-     * Méthode pour bloquer une table et empêcher une autre personne de la réserver
+     * Méthode pour bloquer une table et empêcher les autres utilisateurs de la réserver
      * @param indexRestaurant Index du restaurant où se trouve la table
      * @param date Date à laquelle on veut réserver la table
      * @param nbPersonnes Nombre de personnes dans la réservation
@@ -220,14 +237,19 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
 
         try {
             bd.lockTables("reservation", "restaurant", "tabl");
+
+            // Récupération des tables libres via notre propre méthode
             String json_tablesLibre = getTablesLibreRestaurant(indexRestaurant, date);
             Tabl[] tables = objectMapper.readValue(json_tablesLibre, Tabl[].class);
+
+            // Recherche d'une table libre correspondant aux critères de recherches
             for(Tabl table : tables) {
                 if(table.getNbplace() >= nbPersonnes) {
                     Reservation reservation = new Reservation("", "", nbPersonnes, "", indexRestaurant, date, new Date(System.currentTimeMillis()), table.getNumtab());
                     reservation.save(bd);
                     bd.unlockTable();
-                    return getJson(reservation);
+                    // Chiffrement du ticket
+                    return encryptMessage(keys.getPublic(), getJson(reservation));
                 }
             }
             return "";
@@ -241,6 +263,16 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Database error, a parameter might not exist");
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            try {
+                // Il faut débloquer la table dans toutes les situations
+                bd.unlockTable();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Database error");
+            }
         }
 
     }
@@ -261,6 +293,13 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             throw new RuntimeException(e);
         }
 
+        // Avant toutes choses, déchiffrer le ticket
+        try {
+            ticket = decryptMessage(keys.getPrivate(), ticket);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
         if(ticket.isEmpty()) {
             throw new RuntimeException("Empty ticket");
         }
@@ -272,12 +311,14 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         try {
             Reservation reservation = objectMapper.readValue(ticket, Reservation.class);
 
+            // Seuls les bloquages disposent d'une date d'ajout
             if(reservation.getDateajout() == null) {
                 throw new RuntimeException("Invalid ticket");
             }
 
             try {
                 boolean invalid = true;
+                // On cherche si le ticket correspond à une entrée pour éviter des ajouts non controller
                 ArrayList<Reservation> reservations = Reservation.getAll(bd);
                 for(Reservation myRes : reservations) {
                     if(myRes.equals(reservation)) {
@@ -292,6 +333,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
                 throw new RuntimeException("Error while getting database data");
             }
 
+            // ticket valide → On le transforme en réservation définitive
             reservation.setDateajout(null);
             reservation.setNom(nom);
             reservation.setPrenom(prenom);
@@ -320,7 +362,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         return getClientHost();
     }
 
-    /**
+    /** --------------------------------------------------------------------------------------------
      * Méthode pour transformer un objet en string Json, en gérant les erreurs
      * @param object l'objet à transformer en Json
      * @return l'objet sous forme de Json
@@ -335,13 +377,85 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         }
     }
 
+    /**
+     * Méthode pour chiffrer un message à partir d'une clé RSA
+     * @param key clé publique de chiffrement
+     * @param message le message à chiffrer
+     * @return le message chiffré, au format base 64
+     * @throws RuntimeException En cas d'erreur de chiffrement (offusqué)
+     */
+    private static String encryptMessage(PublicKey key, String message) throws RuntimeException {
+        try {
+            Cipher encryptCipher = Cipher.getInstance("RSA");
+            encryptCipher.init(Cipher.ENCRYPT_MODE, key);
+            byte[] secretMessageBytes = message.getBytes(StandardCharsets.UTF_8);
+            byte[] encryptedMessageBytes = encryptCipher.doFinal(secretMessageBytes);
+            return Base64.getEncoder().encodeToString(encryptedMessageBytes);
+
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erreur");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erreur");
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erreur");
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erreur");
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erreur");
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erreur");
+        }
+
+    }
+
+    /**
+     * Méthode pour chiffrer un message à partir d'une clé RSA
+     * @param key clé privée de déchiffrement
+     * @param message le message à déchiffrer
+     * @return le message déchiffré
+     * @throws RuntimeException En cas d'erreur de déchiffrement (offusqué)
+     */
+    private static String decryptMessage(PrivateKey key, String message) throws RuntimeException {
+        try{
+            Cipher decryptCipher = Cipher.getInstance("RSA");
+            decryptCipher.init(Cipher.DECRYPT_MODE, key);
+            byte[] encryptedMessageBytes = Base64.getDecoder().decode(message);
+            byte[] decryptedMessageBytes = decryptCipher.doFinal(encryptedMessageBytes);
+            return new String(decryptedMessageBytes, StandardCharsets.UTF_8);
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erreur");
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erreur");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erreur");
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erreur");
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erreur");
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erreur");
+        }
+    }
+
     /** --------------------------------------------------------------------------------------------
      * Méthode main pour visualiser les valeurs de retour des méthodes
      * @param args pas d'arguments requis
      * @throws SQLException
      * @throws RemoteException
      */
-    public static void main (String[] args) throws SQLException, RemoteException {
+    public static void main (String[] args) throws SQLException, RemoteException, NoSuchAlgorithmException {
         String url = "jdbc:mariadb://localhost:3306/miaam";
         Scanner sc = new Scanner(System.in);
         System.out.println("Connexion à la base de donnée :");
@@ -364,6 +478,5 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         reservation = resto.bloquerTable(1, Date.valueOf("2024-06-15"), 4);
         System.out.println(reservation);
         resto.reserverTable("Naigeon", "Adrien", "3630", reservation);
-
     }
 }

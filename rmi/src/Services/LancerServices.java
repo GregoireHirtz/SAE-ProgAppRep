@@ -10,6 +10,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +32,7 @@ public class LancerServices {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
-    public static void main (String args[]) throws RemoteException, UnknownHostException, SQLException, InterruptedException, ServerNotActiveException {
+    public static void main (String args[]) throws RemoteException, UnknownHostException, SQLException, InterruptedException, ServerNotActiveException, NoSuchAlgorithmException {
 
         if (args.length > 0) {
             port = Integer.parseInt(args[0]);
