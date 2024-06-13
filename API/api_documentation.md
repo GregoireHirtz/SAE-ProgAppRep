@@ -72,6 +72,7 @@
   "numrestau":"1"
 }
 ```
+Si la réservation est impossible, le serveur renvoie un code 400 avec le message "Réservation impossible".
 
 ## Finaliser la réservation
 ### __POST__ /tables
