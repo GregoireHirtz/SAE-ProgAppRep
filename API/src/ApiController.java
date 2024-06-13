@@ -71,6 +71,14 @@ public class ApiController implements HttpHandler {
                 response = objectMapper.readValue("{\"error\":\"Invalid path or arguments\"}", HashMap.class);
             }
         }
+        else if (path.equals("/hazards")) {
+            try {
+                response = objectMapper.readValue(ApiService.getHazards(), new TypeReference<List<HashMap>>() {});
+            } catch (Exception e) {
+                response = new HashMap<>();
+                ((HashMap) response).put("error", e.getMessage());
+            }
+        }
         else {
             response = objectMapper.readValue("{\"error\":\"Invalid path\"}", HashMap.class);
         }
