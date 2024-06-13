@@ -2,18 +2,32 @@
 <html>
 <head>
     <title>RMI</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <style>
-        #map {
-            height: 700px;
-            width: 100%;
-        }
-    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<h1>Carte Nancy</h1>
-<div id="map"></div>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="./js/map.js"></script>
+<header>
+    <nav>
+        <div class="titre">
+            <h1>ProgRepartie</h1>
+        </div>
+        <ul class="menu">
+            <li><a id ="reset">Reset</a></li>
+            <li><a id ="velo">Stations</a></li>
+            <li><a id ="restaurants">Restaurants</a></li>
+        </ul>
+    </nav>
+</header>
+<section>
+    <div id="map"></div>
+</section>
+<section>
+
+
+
+</section>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="module" src="./js/map.js"></script>
+
 </body>
 </html>
