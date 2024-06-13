@@ -27,7 +27,7 @@ public class ClientServiceRestaurant {
         }
 
         //Recupere l'interface distante dans l'annuaire de la machine (distant)
-        ServiceRestaurant resto = (ServiceRestaurant) reg.lookup("restaurant");
+        ServiceRestaurant resto = (ServiceRestaurant) reg.lookup("restaurants");
 
         System.out.println(resto.getRestaurants());
         System.out.println(resto.getRestaurant(1));
