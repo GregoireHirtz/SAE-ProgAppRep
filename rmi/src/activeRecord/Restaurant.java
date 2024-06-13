@@ -81,13 +81,13 @@ public class Restaurant implements ActiveRecord{
         if (this.numrestau <= 0)
             throw new IllegalArgumentException("l'objet actuel n'est pas sauvegardé sur le bd");
 
-        String requete = "SELECT * FROM reservation WHERE numrestau = ?";
+        String requete2 = "DELETE FROM menu WHERE numrestau=?";
+        String requete = "DELETE FROM reservation WHERE numrestau = ?";
         try{
             ResultSet r = bd.executeQuery(requete, this.numrestau);
             if (r.next()){
-                int numres = r.getInt("numres");
-                requete = "DELETE FROM reservation WHERE numres = ?";
-                bd.executeQuery(requete, numres);
+                bd.executeQuery(requete, numrestau);
+                bd.executeQuery(requete2, numrestau);
             }
             requete = "DELETE FROM restaurant WHERE numrestau = ?";
             bd.executeQuery(requete, this.numrestau);
@@ -173,5 +173,9 @@ public class Restaurant implements ActiveRecord{
             Tables.add(new Tabl(r.getInt("nbplace"), r.getInt("numRestau")));
         }
         return  Tables;
+    }
+
+    public Object getPlats(Bd bd) {
+        return null;
     }
 }

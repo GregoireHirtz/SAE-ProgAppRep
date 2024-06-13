@@ -110,4 +110,12 @@ public class Bd {
             throw new RuntimeException("Error while retrieving data, DB might be down");
         }
     }
+
+    public void lockTable(String reservation) {
+        //TODO : a faire
+    }
+
+    public void unLockTable(String reservation) {
+        //TODO : a faire
+    }
 }
