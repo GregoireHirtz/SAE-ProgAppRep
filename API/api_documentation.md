@@ -127,3 +127,33 @@ Si la réservation est impossible, le serveur renvoie un code 400 avec le messag
   {"numtab":6,"nbplace":2, "numrestau": 1}
 ]
 ```
+
+## Récupérer les Incidents de circulation
+### __GET__ /hazards
+### Résultat :
+```json
+{
+  "incidents": [
+    {
+      "type": "CONSTRUCTION",
+      "description": "Chauffage urbain - Voirie: Réduction à une file de circulation, Rétrécissement des voies",
+      "short_description": "Chauffage urbain - Voirie",
+      "starttime": "2024-06-01T00:00:00",
+      "endtime": "2024-08-30T00:00:00",
+      "location": {
+        "street": "Boulevard Louis Barthou",
+        "polyline": "48.670705110635964 6.186903512600356",
+        "location_description": "BOULEVARD LOUIS BARTHOU, VANDOEUVRE"
+      },
+      "source": {
+        "name": "Métropole du Grand Nancy",
+        "reference": "Grand_Nancy"
+      },
+      "updatetime": "2024-03-21T20:29:37.251429",
+      "creationtime": "2024-03-21T20:29:37.251421",
+      "id": "FrMdGN54180828"
+    },
+    "..."
+  ]
+}
+```
