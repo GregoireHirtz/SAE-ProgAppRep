@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.util.HashMap;
@@ -72,11 +73,12 @@ public class ApiController implements HttpHandler {
             }
         }
         else if (path.equals("/hazards")) {
+            response = objectMapper.readValue("{\"error\":\"Failed to get hazards\"}", HashMap.class);
             try {
                 response = objectMapper.readValue(ApiService.getHazards(), new TypeReference<List<HashMap>>() {});
             } catch (Exception e) {
-                response = new HashMap<>();
-                ((HashMap) response).put("error", e.getMessage());
+                e.printStackTrace();
+
             }
         }
         else {

@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -13,6 +14,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.List;
 
 public class ApiService {
     private static ServiceRestaurant.ServiceRestaurant instance;
@@ -40,12 +43,10 @@ public class ApiService {
                 .followRedirects(HttpClient.Redirect.NORMAL)
                 .connectTimeout(Duration.ofSeconds(20))
                 .proxy(ProxySelector.of(new InetSocketAddress("www-cache.iutnc.univ-lorraine.fr", 3128)))
-                .authenticator(Authenticator.getDefault())
                 .build();
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://carto.g-ny.org/data/cifs/cifs_waze_v2.json"))
-                .GET()
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
