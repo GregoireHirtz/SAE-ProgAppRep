@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS commande;
 DROP TABLE IF EXISTS tabl;
 DROP TABLE IF EXISTS reservation;
+DROP TABLE IF EXISTS menu;
 DROP TABLE IF EXISTS restaurant;
 DROP TABLE IF EXISTS plat;
 
@@ -154,3 +155,32 @@ VALUES
     (6, 4),
     (2, 4),
     (4, 4);
+
+
+-- Insère des données de test pour la table menu
+INSERT INTO menu (numrestau, numplat)
+VALUES
+    -- Menu pour 'Le Petit Parisien' (Paris)
+    (1, 1),  -- assiette de crudités
+    (1, 4),  -- filet de boeuf
+    (1, 13), -- crème caramel
+    (1, 11), -- brochet à l'oseille
+
+    -- Menu pour 'The London Pub' (Londres)
+    (2, 7),  -- pate lorrain
+    (2, 9),  -- entrecote printaniere
+    (2, 16), -- fois gras de lorraine
+    (2, 3),  -- sorbet mirabelle
+
+    -- Menu pour 'La Bella Italia' (Rome)
+    (3, 6),  -- chevre chaud
+    (3, 10), -- gratin dauphinois
+    (3, 14), -- munster au cumin
+    (3, 5),  -- salade verte
+
+    -- Menu pour 'Tokyo Sushi House' (Tokyo)
+    (4, 8),  -- saumon fumé
+    (4, 15), -- filet de sole au beurre
+    (4, 12), -- gigot d'agneau
+    (4, 2);  -- tarte de saison
+
