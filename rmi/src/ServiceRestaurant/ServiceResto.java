@@ -144,7 +144,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
                 if(table.getNbplace() >= nbPersonnes) {
                     Reservation reservation = new Reservation("", "", nbPersonnes, "", indexRestaurant, date, new Date(System.currentTimeMillis()), table.getNumtab());
                     reservation.save(bd);
-                    bd.unLockTable("reservation");
+                    bd.unlockTable();
                     return getJson(reservation);
                 }
             }
