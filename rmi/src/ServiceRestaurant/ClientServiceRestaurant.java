@@ -11,7 +11,7 @@ public class ClientServiceRestaurant {
     public static void main (String args[]) throws RemoteException, NotBoundException {
         ClientServiceRestaurant client = new ClientServiceRestaurant();
 
-        Registry reg = LocateRegistry.getRegistry(args[0]);
+        Registry reg = LocateRegistry.getRegistry(args[0], 1659);
 
         try{
             String[] registerEntries = reg.list();

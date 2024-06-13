@@ -9,6 +9,7 @@ import java.rmi.ConnectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -30,7 +31,7 @@ public class LancerRestaurant {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
-    public static void main (String args[]) throws RemoteException, UnknownHostException, SQLException, InterruptedException {
+    public static void main (String args[]) throws RemoteException, UnknownHostException, SQLException, InterruptedException, ServerNotActiveException {
 
         if (args.length > 0) {
             port = Integer.parseInt(args[0]);
@@ -70,7 +71,7 @@ public class LancerRestaurant {
 
         //ajout du service a l'annuaire
         reg.rebind(nomService, service);
-        System.out.println("Service créé, IP:" +  ANSI_CYAN + InetAddress.getLocalHost() + ANSI_RESET + " PORT:" + ANSI_CYAN + port + ANSI_RESET + " NOM:" + ANSI_CYAN + nomService + ANSI_RESET);
+        System.out.println("Service créé, IP:" +  ANSI_CYAN + service.ping() + ANSI_RESET + " PORT:" + ANSI_CYAN + port + ANSI_RESET + " NOM:" + ANSI_CYAN + nomService + ANSI_RESET);
 
         //Toutes les minutes, vérifie la validité des tickets
         while (true) {

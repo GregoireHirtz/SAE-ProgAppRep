@@ -14,6 +14,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
+import java.rmi.server.ServerNotActiveException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -57,6 +58,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
      */
     public String getRestaurants() throws RemoteException, RuntimeException {
         try {
+            System.out.println(LancerRestaurant.ANSI_CYAN + getClientHost() + LancerRestaurant.ANSI_RESET + ": getRestaurants");
             if(bd.haveUpdate("restaurant")) {
                 this.restaurants = Restaurant.getAll(bd);
                 this.restaurantHashMap = new HashMap<>();
@@ -67,6 +69,8 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Error while retrieving data, DB might be down");
+        } catch (ServerNotActiveException e) {
+            throw new RuntimeException(e);
         }
 
         return getJson(this.restaurants);
@@ -80,6 +84,11 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
      * @throws RuntimeException Pour toute autre erreur liée au code
      */
     public String getRestaurant(int indexRestaurant) throws RemoteException, RuntimeException {
+        try {
+            System.out.println(LancerRestaurant.ANSI_CYAN + getClientHost() + LancerRestaurant.ANSI_RESET + ": getRestaurant " + indexRestaurant);
+        } catch (ServerNotActiveException e) {
+            throw new RuntimeException(e);
+        }
         getRestaurants();
 
         return getJson(restaurantHashMap.get(indexRestaurant));
@@ -93,6 +102,12 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
      * @throws RuntimeException Pour toute autre erreur liée au code
      */
     public String getMenuRestaurant(int indexRestaurant) throws RemoteException, RuntimeException {
+        try {
+            System.out.println(LancerRestaurant.ANSI_CYAN + getClientHost() + LancerRestaurant.ANSI_RESET + ": getMenuRestaurant " + indexRestaurant);
+        } catch (ServerNotActiveException e) {
+            throw new RuntimeException(e);
+        }
+
         getRestaurants();
 
         try {
@@ -111,6 +126,12 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
      * @throws RuntimeException Pout toute autre erreur liée au code
      */
     public String getTablesRestaurant(int indexRestaurant) throws RemoteException, RuntimeException {
+        try {
+            System.out.println(LancerRestaurant.ANSI_CYAN + getClientHost() + LancerRestaurant.ANSI_RESET + ": getTablesRestaurant " + indexRestaurant);
+        } catch (ServerNotActiveException e) {
+            throw new RuntimeException(e);
+        }
+
         getRestaurants();
 
         try {
@@ -130,6 +151,12 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
      * @throws RuntimeException Pour toute autre erreur liée au code
      */
     public String getTablesLibreRestaurant(int indexRestaurant, Date date) throws RemoteException, RuntimeException{
+        try {
+            System.out.println(LancerRestaurant.ANSI_CYAN + getClientHost() + LancerRestaurant.ANSI_RESET + ": getTablesLibreRestaurant " + indexRestaurant);
+        } catch (ServerNotActiveException e) {
+            throw new RuntimeException(e);
+        }
+
         getRestaurants();
 
         try {
@@ -150,6 +177,12 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
      * @throws RuntimeException Pour toute autre erreur liée au code
      */
     public String bloquerTable(int indexRestaurant, Date date, int nbPersonnes) throws RemoteException, RuntimeException {
+        try {
+            System.out.println(LancerRestaurant.ANSI_CYAN + getClientHost() + LancerRestaurant.ANSI_RESET + ": bloquerTable indexRestaurant:" + indexRestaurant + " date:" + date + " nbPersonnes:" + nbPersonnes);
+        } catch (ServerNotActiveException e) {
+            throw new RuntimeException(e);
+        }
+
         try {
             bd.lockTables("reservation", "restaurant", "tabl");
             String json_tablesLibre = getTablesLibreRestaurant(indexRestaurant, date);
@@ -188,6 +221,12 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
      */
     public void reserverTable(String nom, String prenom, String telephone, String ticket) throws RemoteException, RuntimeException {
         try {
+            System.out.println(LancerRestaurant.ANSI_CYAN + getClientHost() + LancerRestaurant.ANSI_RESET + ": reserverTable personne:" + nom + " " + prenom + " telephone:" + telephone + " ticket:" + ticket);
+        } catch (ServerNotActiveException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
             Reservation reservation = objectMapper.readValue(ticket, Reservation.class);
             reservation.setDateajout(null);
             reservation.setNom(nom);
@@ -203,6 +242,16 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    /**
+     * Méthode pour ping le service
+     * @return l'ip du client
+     * @throws RemoteException En cas d'erreur RMI
+     * @throws RuntimeException S
+     */
+    public String ping() throws RemoteException, ServerNotActiveException {
+        return getClientHost();
     }
 
     /**
