@@ -169,7 +169,7 @@ public class Restaurant implements ActiveRecord{
         String requete = "SELECT * FROM tabl WHERE numrestau == ?";
 
         ResultSet r = bd.executeQuery(requete, numrestau);
-        ArrayList<Tabl> Tables= new ArrayList<Tabl>();
+        ArrayList<Tabl> Tables= new ArrayList<>();
         while (r.next()){
             Tables.add(new Tabl(r.getInt("numtab"), r.getInt("nbplace"), r.getInt("numRestau")));
         }
@@ -184,7 +184,7 @@ public class Restaurant implements ActiveRecord{
                 "(SELECT numtab FROM reservation WHERE numrestau == ? AND date == ?)";
 
         ResultSet r = bd.executeQuery(requete, numrestau, numrestau, date);
-        ArrayList<Tabl> Tables= new ArrayList<Tabl>();
+        ArrayList<Tabl> Tables= new ArrayList<>();
         while (r.next()){
             Tables.add(new Tabl(r.getInt("numtab"), r.getInt("nbplace"), r.getInt("numRestau")));
         }
