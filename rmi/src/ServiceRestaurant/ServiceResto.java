@@ -82,7 +82,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         getRestaurants();
 
         try {
-            return getJson(restaurantHashMap.get(indexRestaurant).getPlats(bd));
+            return getJson(restaurantHashMap.get(indexRestaurant).getMenu(bd));
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Error while retrieving data, DB might be down");
@@ -119,7 +119,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         getRestaurants();
 
         try {
-            return getJson(restaurantHashMap.get(indexRestaurant).getTablesLibre(bd, Date date));
+            return getJson(restaurantHashMap.get(indexRestaurant).getTablesLibre(bd, date));
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Error while retrieving data, DB might be down");
