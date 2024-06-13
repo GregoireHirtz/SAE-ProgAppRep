@@ -4,15 +4,15 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 public class ApiService {
-    private static ServiceRestaurant instance;
+    private static ServiceRestaurant.ServiceRestaurant instance;
 
-    public static ServiceRestaurant getInstance(String address) throws RemoteException {
+    public static ServiceRestaurant.ServiceRestaurant getInstance(String address) throws RemoteException {
         if (instance == null) {
-            Registry reg = LocateRegistry.getRegistry(address, 1099);
+            Registry reg = LocateRegistry.getRegistry(address, 1659);
 
             //Recupere l'interface distante dans l'annuaire de la machine (distant)
             try {
-                instance = (ServiceRestaurant) reg.lookup("restaurant");
+                instance = (ServiceRestaurant.ServiceRestaurant) reg.lookup("restaurants");
             } catch (NotBoundException e) {
                 e.printStackTrace();
             }
