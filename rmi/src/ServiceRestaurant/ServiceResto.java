@@ -217,8 +217,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         if(nbPersonnes <= 0) {
             throw new RuntimeException("nbPersonnes <= 0");
         }
-
-
+        
         try {
             bd.lockTables("reservation", "restaurant", "tabl");
             String json_tablesLibre = getTablesLibreRestaurant(indexRestaurant, date);
@@ -267,7 +266,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         }
 
         if(nom.isEmpty() || prenom.isEmpty() || telephone.isEmpty()) {
-            throw new RuntimeException("Nom("+nom+") Prénom("+prenom+") ou téléphone("+telephone+") vide.");
+            throw new RuntimeException("Nom("+nom+") Prénom("+prenom+") or téléphone("+telephone+") empty");
         }
 
         try {
