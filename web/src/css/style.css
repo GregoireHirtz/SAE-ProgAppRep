@@ -1,0 +1,49 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 10px 0;
+}
+
+.titre h1 {
+    margin: 0;
+    padding: 0 20px;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.menu li {
+    margin: 0 10px;
+}
+
+.menu a {
+    color: white;
+    text-decoration: none;
+    padding: 5px 10px;
+}
+
+.menu a:hover {
+    background-color: #575757;
+    border-radius: 5px;
+}
+
+#map {
+    width: 100%;
+    height: calc(100vh - 60px); /* Adjust this value based on the height of your header */
+    margin-top: 10px; /* Optional, for some spacing */
+}
