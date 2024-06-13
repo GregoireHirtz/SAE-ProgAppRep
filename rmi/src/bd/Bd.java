@@ -52,6 +52,16 @@ public class Bd {
         }
     }
 
+    public void lockTable(String tableName) throws SQLException {
+        String query = "LOCK TABLES ? WRITE";
+        executeQuery(query, tableName);
+    }
+
+    public void unlockTable() throws SQLException {
+        String query = "UNLOCK TABLES";
+        executeQuery(query);
+    }
+
     public boolean haveUpdate(String tableName) {
         String[] splittedDbName = url.split("/");
         String databaseName = splittedDbName[splittedDbName.length -1];
