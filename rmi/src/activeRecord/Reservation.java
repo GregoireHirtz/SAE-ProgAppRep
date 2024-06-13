@@ -85,8 +85,9 @@ public class Reservation implements ActiveRecord {
         ResultSet r = bd.executeQuery(requete, this.numres);
     }
 
-    static public void nettoyerTickets(Bd bd){
-
+    static public void nettoyerTickets(Bd bd) throws SQLException{
+        String sql = "DELETE FROM reservation WHERE dateajout < NOW() - INTERVAL 15 MINUTE";
+        bd.executeQuery(sql);
     }
 
 

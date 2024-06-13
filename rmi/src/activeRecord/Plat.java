@@ -69,8 +69,10 @@ public class Plat implements ActiveRecord{
         if (this.numplat <= 0)
             throw new IllegalArgumentException("l'objet actuel n'est pas sauvegardé sur le bd");
 
+        String requete2 = "DELETE FROM menu WHERE numplat=?";
         String requete = "DELETE FROM plat WHERE numplat = ?";
-        ResultSet r = bd.executeQuery(requete, this.numplat);
+        bd.executeQuery(requete, this.numplat);
+        bd.executeQuery(requete2, this.numplat);
     }
 
     public String toString(){

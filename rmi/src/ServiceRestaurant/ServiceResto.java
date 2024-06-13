@@ -142,11 +142,9 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             Tabl[] tables = objectMapper.readValue(json_tablesLibre, Tabl[].class);
             for(Tabl table : tables) {
                 if(table.getNbplace() >= nbPersonnes) {
-                    long millis = System.currentTimeMillis();
-                    Date dateAjout = new Date(millis);
-                    Reservation reservation = new Reservation("", "", nbPersonnes, "", indexRestaurant, date, dateAjout, table.getNumtab());
+                    Reservation reservation = new Reservation("", "", nbPersonnes, "", indexRestaurant, date, new Date(System.currentTimeMillis()), table.getNumtab());
                     reservation.save(bd);
-                    bd.unlockTable();
+                    bd.unLockTable("reservation");
                     return getJson(reservation);
                 }
             }
