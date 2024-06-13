@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.util.HashMap;
@@ -71,6 +72,15 @@ public class ApiController implements HttpHandler {
                 response = objectMapper.readValue("{\"error\":\"Invalid path or arguments\"}", HashMap.class);
             }
         }
+        else if (path.equals("/hazards")) {
+            response = objectMapper.readValue("{\"error\":\"Failed to get hazards\"}", HashMap.class);
+            try {
+                response = objectMapper.readValue(ApiService.getHazards(), new TypeReference<List<HashMap>>() {});
+            } catch (Exception e) {
+                e.printStackTrace();
+
+            }
+        }
         else {
             response = objectMapper.readValue("{\"error\":\"Invalid path\"}", HashMap.class);
         }
@@ -106,7 +116,13 @@ public class ApiController implements HttpHandler {
                     int numrestau = Integer.parseInt(args[2]);
                     int nbpers = (int) reservation.get("nbpers");
                     Date date = Date.valueOf((String) reservation.get("date"));
-                    HashMap ticket = new ObjectMapper().readValue(ApiService.getInstance(this.address).bloquerTable(numrestau, date, nbpers), HashMap.class);
+                    String tableData = ApiService.getInstance(this.address).bloquerTable(numrestau, date, nbpers);
+                    HashMap ticket;
+                    if (tableData != null && !tableData.isEmpty()) {
+                        ticket = new ObjectMapper().readValue(tableData, HashMap.class);
+                    } else {
+                        ticket = new HashMap<>();
+                    }
                     if (ticket.isEmpty()) {
                         response.put("error", "Réservation impossible");
                         exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
@@ -114,14 +130,23 @@ public class ApiController implements HttpHandler {
                     }
                     // On renvoie le ticket de réservation au client
                     response.put("ticket", ticket);
+                    exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+                    exchange.sendResponseHeaders(200, 0);
                 }
                 // S'il y a 2 arguments, c'est-à-dire /tables
                 else if (args.length == 2) {
                     String nom = (String) reservation.get("nom");
                     String prenom = (String) reservation.get("prenom");
                     String telephone = (String) reservation.get("telephone");
-                    String ticket = new ObjectMapper().writeValueAsString(reservation.get("ticket"));
+                    Object ticketObj = reservation.get("ticket");
+                    String ticket = "";
+                    if (ticketObj != null) {
+                        ticket = new ObjectMapper().writeValueAsString(ticketObj);
+                    }
                     ApiService.getInstance(this.address).reserverTable(nom, prenom, telephone, ticket);
+                    exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+                    exchange.sendResponseHeaders(200, 0);
+
                 }
                 else {
                     response.put("error", "Invalid path or arguments");

@@ -58,7 +58,7 @@
 ### Request body :
 ```json
 {
-  "nbpers":"2",
+  "nbpers":2,
   "date":"2024-06-11"
 }
 ```
@@ -66,10 +66,17 @@
 ### Résultat (le ticket) :
 ```json
 {
-  "numres":"1",
-  "nbpers":"2",
-  "date":"2024-06-11",
-  "numrestau":"1"
+  "ticket":{
+    "date": "2024-06-30",
+    "numres": 0,
+    "nbpers": 2,
+    "dateajout": "2024-06-13",
+    "numtab": 10,
+    "numrestau": 1,
+    "telephone": "",
+    "nom": "",
+    "prenom": ""
+  }
 }
 ```
 Si la réservation est impossible, le serveur renvoie un code 400 avec le message "Réservation impossible".
@@ -83,10 +90,15 @@ Si la réservation est impossible, le serveur renvoie un code 400 avec le messag
   "prenom":"Dupont",
   "telephone":"0606060606",
   "ticket":{
-    "numres":"1",
-    "nbpers":"2",
-    "date":"2024-06-11",
-    "numrestau":"1"
+    "date": "2024-06-30",
+    "numres": 0,
+    "nbpers": 2,
+    "dateajout": "2024-06-13",
+    "numtab": 10,
+    "numrestau": 1,
+    "telephone": "",
+    "nom": "",
+    "prenom": ""
   }
 }
 ```

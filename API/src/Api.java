@@ -10,6 +10,8 @@ public class Api {
         server.createContext("/hello", new ApiController(args[0]));
         server.createContext("/restaurants", new ApiController(args[0]));
         server.createContext("/tables", new ApiController(args[0]));
+        server.createContext("/plats", new ApiController(args[0]));
+        server.createContext("/hazards", new ApiController(args[0]));
         server.setExecutor(null);
         server.start();
     }
