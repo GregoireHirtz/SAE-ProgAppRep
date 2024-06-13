@@ -89,6 +89,11 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         } catch (ServerNotActiveException e) {
             throw new RuntimeException(e);
         }
+
+        if(indexRestaurant <= 0) {
+            throw new RuntimeException("indexRestaurant <= 0");
+        }
+
         getRestaurants();
 
         return getJson(restaurantHashMap.get(indexRestaurant));
@@ -106,6 +111,10 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             System.out.println(LancerRestaurant.ANSI_CYAN + getClientHost() + LancerRestaurant.ANSI_RESET + ": getMenuRestaurant " + indexRestaurant);
         } catch (ServerNotActiveException e) {
             throw new RuntimeException(e);
+        }
+
+        if(indexRestaurant <= 0) {
+            throw new RuntimeException("indexRestaurant <= 0");
         }
 
         getRestaurants();
@@ -132,6 +141,11 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             throw new RuntimeException(e);
         }
 
+
+        if(indexRestaurant <= 0) {
+            throw new RuntimeException("indexRestaurant <= 0");
+        }
+
         getRestaurants();
 
         try {
@@ -155,6 +169,10 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             System.out.println(LancerRestaurant.ANSI_CYAN + getClientHost() + LancerRestaurant.ANSI_RESET + ": getTablesLibreRestaurant " + indexRestaurant);
         } catch (ServerNotActiveException e) {
             throw new RuntimeException(e);
+        }
+
+        if(indexRestaurant <= 0) {
+            throw new RuntimeException("indexRestaurant <= 0");
         }
 
         getRestaurants();
@@ -183,6 +201,24 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             throw new RuntimeException(e);
         }
 
+        if(indexRestaurant <= 0) {
+            throw new RuntimeException("indexRestaurant <= 0");
+        }
+
+        {
+            long millis = System.currentTimeMillis();
+            Date today = new Date(millis);
+
+            if(!date.after(today)) {
+                throw new RuntimeException("given date("+date+") not in the future");
+            }
+        }
+
+        if(nbPersonnes <= 0) {
+            throw new RuntimeException("nbPersonnes <= 0");
+        }
+
+
         try {
             bd.lockTables("reservation", "restaurant", "tabl");
             String json_tablesLibre = getTablesLibreRestaurant(indexRestaurant, date);
@@ -205,7 +241,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             throw new RuntimeException("Data reading error");
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException("Database error, a parameter might not exist");
         }
 
     }
@@ -226,8 +262,38 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             throw new RuntimeException(e);
         }
 
+        if(ticket.isEmpty()) {
+            throw new RuntimeException("Empty ticket");
+        }
+
+        if(nom.isEmpty() || prenom.isEmpty() || telephone.isEmpty()) {
+            throw new RuntimeException("Nom("+nom+") Prénom("+prenom+") ou téléphone("+telephone+") vide.");
+        }
+
         try {
             Reservation reservation = objectMapper.readValue(ticket, Reservation.class);
+
+            if(reservation.getDateajout() != null) {
+                throw new RuntimeException("Invalid ticket");
+            }
+
+            try {
+                boolean invalid = true;
+                ArrayList<Reservation> reservations = Reservation.getAll(bd);
+                for(Reservation myRes : reservations) {
+                    if(myRes.equals(reservation)) {
+                        invalid = false;
+                    }
+                }
+                if(invalid) {
+                    throw new RuntimeException("Invalid ticket");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Error while getting database data");
+            }
+
+
             reservation.setDateajout(null);
             reservation.setNom(nom);
             reservation.setPrenom(prenom);
@@ -235,12 +301,13 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             reservation.save(bd);
         } catch (JsonMappingException e) {
             e.printStackTrace();
-            throw new RuntimeException("Data reading error, have you sent the right ticket ?");
+            throw new RuntimeException("Ticket error, have you sent the right ticket ? Ticket: " + ticket);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            throw new RuntimeException("Data reading error, have you sent the right ticket ?");
+            throw new RuntimeException("Ticket error, have you sent the right ticket ? Ticket: " + ticket);
         } catch (SQLException e) {
-            throw new RuntimeException(e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Database error, are you using an out-of-date ticket ?");
         }
     }
 

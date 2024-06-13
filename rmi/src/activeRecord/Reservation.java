@@ -101,6 +101,19 @@ public class Reservation implements ActiveRecord {
         return "Réservation n°"+numres+" ("+this.nom+" "+this.prenom+" : "+this.nbpers+" "+this.telephone+" : "+this.numrestau+")";
     }
 
+    public boolean equals(Reservation other) {
+        if(other.numres != numres) return false;
+        if(other.nom != nom) return false;
+        if(other.prenom != prenom) return false;
+        if(other.nbpers != nbpers) return false;
+        if(other.telephone != telephone) return false;
+        if(other.numrestau != numrestau) return false;
+        if(other.date != date) return false;
+        if(other.dateajout != dateajout) return false;
+        if(other.numtab != numtab) return false;
+        return true;
+    }
+
     public int getNumres() {
         return numres;
     }
