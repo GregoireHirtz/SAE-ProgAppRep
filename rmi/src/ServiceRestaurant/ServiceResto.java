@@ -271,8 +271,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
 
         try {
             Reservation reservation = objectMapper.readValue(ticket, Reservation.class);
-
-            System.out.println(reservation);
+            
             if(reservation.getDateajout() == null) {
                 throw new RuntimeException("Invalid ticket");
             }
@@ -293,12 +292,12 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
                 throw new RuntimeException("Error while getting database data");
             }
 
-
             reservation.setDateajout(null);
             reservation.setNom(nom);
             reservation.setPrenom(prenom);
             reservation.setTelephone(telephone);
             reservation.save(bd);
+
         } catch (JsonMappingException e) {
             e.printStackTrace();
             throw new RuntimeException("Ticket error, have you sent the right ticket ? Ticket: " + ticket);
