@@ -1,18 +1,32 @@
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
+import java.net.Authenticator;
+import java.net.InetSocketAddress;
+import java.net.ProxySelector;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.List;
 
 public class ApiService {
-    private static ServiceRestaurant instance;
+    private static ServiceRestaurant.ServiceRestaurant instance;
 
-    public static ServiceRestaurant getInstance(String address) throws RemoteException {
+    public static ServiceRestaurant.ServiceRestaurant getInstance(String address) throws RemoteException {
         if (instance == null) {
-            Registry reg = LocateRegistry.getRegistry(address, 1099);
+            Registry reg = LocateRegistry.getRegistry(address, 1659);
 
             //Recupere l'interface distante dans l'annuaire de la machine (distant)
             try {
-                instance = (ServiceRestaurant) reg.lookup("restaurant");
+                instance = (ServiceRestaurant.ServiceRestaurant) reg.lookup("restaurants");
             } catch (NotBoundException e) {
                 e.printStackTrace();
             }
@@ -21,5 +35,21 @@ public class ApiService {
     }
 
     private ApiService() {
+    }
+
+    public static String getHazards() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_1_1)
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .connectTimeout(Duration.ofSeconds(20))
+                .proxy(ProxySelector.of(new InetSocketAddress("www-cache.iutnc.univ-lorraine.fr", 3128)))
+                .build();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://carto.g-ny.org/data/cifs/cifs_waze_v2.json"))
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return response.body();
     }
 }
