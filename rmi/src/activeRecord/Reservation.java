@@ -16,9 +16,6 @@ public class Reservation implements ActiveRecord {
     private Date date;
     private Date dateajout;
     private int numtab;
-    private Reservation this.d;
-    private Reservation ;
-
 
     public Reservation(String nom, String prenom, int nbpers, String telephone, int numrestau, Date date, Date dateajout, int numtab) {
         if (nom==null || prenom==null || telephone==null || date==null || dateajout==null)
