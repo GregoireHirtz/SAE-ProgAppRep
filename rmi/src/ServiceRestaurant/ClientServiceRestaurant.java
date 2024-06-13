@@ -6,7 +6,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.sql.Date;
-import java.util.Calendar;
 
 public class ClientServiceRestaurant {
     public static void main (String args[]) throws RemoteException, NotBoundException {
@@ -28,17 +27,17 @@ public class ClientServiceRestaurant {
         }
 
         //Recupere l'interface distante dans l'annuaire de la machine (distant)
-        ServiceRestaurant serveur = (ServiceRestaurant) reg.lookup("restaurant");
+        ServiceRestaurant resto = (ServiceRestaurant) reg.lookup("restaurant");
 
-        // Création d'une date menant à 10 jours plus tard
-        long millis = System.currentTimeMillis();
-        Date currentDate = new Date(millis);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(currentDate);
-        cal.add(Calendar.DAY_OF_MONTH, 10);
-        Date newDate = new Date(cal.getTimeInMillis());
-
-        //Utilisation du service
-        serveur.getRestaurants();
+        System.out.println(resto.getRestaurants());
+        System.out.println(resto.getRestaurant(1));
+        System.out.println(resto.getMenuRestaurant(1));
+        System.out.println(resto.getTablesRestaurant(1));
+        System.out.println(resto.getTablesLibreRestaurant(1, Date.valueOf("2024-06-15")));
+        String reservation = resto.bloquerTable(1, Date.valueOf("2024-06-15"), 6);
+        System.out.println(reservation);
+        reservation = resto.bloquerTable(1, Date.valueOf("2024-06-15"), 4);
+        System.out.println(reservation);
+        resto.reserverTable("Naigeon", "Adrien", "3630", reservation);
     }
 }

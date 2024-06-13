@@ -110,7 +110,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
      * @throws RemoteException En cas d'erreur RMI
      * @throws RuntimeException Pout toute autre erreur liée au code
      */
-    public String getTableRestaurant(int indexRestaurant) throws RemoteException, RuntimeException {
+    public String getTablesRestaurant(int indexRestaurant) throws RemoteException, RuntimeException {
         getRestaurants();
 
         try {
@@ -129,7 +129,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
      * @throws RemoteException En cas d'erreur RMI
      * @throws RuntimeException Pour toute autre erreur liée au code
      */
-    public String getTableLibreRestaurant(int indexRestaurant, Date date) throws RemoteException, RuntimeException{
+    public String getTablesLibreRestaurant(int indexRestaurant, Date date) throws RemoteException, RuntimeException{
         getRestaurants();
 
         try {
@@ -152,7 +152,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
     public String bloquerTable(int indexRestaurant, Date date, int nbPersonnes) throws RemoteException, RuntimeException {
         try {
             bd.lockTables("reservation", "restaurant", "tabl");
-            String json_tablesLibre = getTableLibreRestaurant(indexRestaurant, date);
+            String json_tablesLibre = getTablesLibreRestaurant(indexRestaurant, date);
             Tabl[] tables = objectMapper.readValue(json_tablesLibre, Tabl[].class);
             for(Tabl table : tables) {
                 if(table.getNbplace() >= nbPersonnes) {
@@ -242,12 +242,13 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         System.out.println(resto.getRestaurants());
         System.out.println(resto.getRestaurant(1));
         System.out.println(resto.getMenuRestaurant(1));
-        System.out.println(resto.getTableRestaurant(1));
-        System.out.println(resto.getTableLibreRestaurant(1, Date.valueOf("2024-06-15")));
+        System.out.println(resto.getTablesRestaurant(1));
+        System.out.println(resto.getTablesLibreRestaurant(1, Date.valueOf("2024-06-15")));
         String reservation = resto.bloquerTable(1, Date.valueOf("2024-06-15"), 6);
         System.out.println(reservation);
         reservation = resto.bloquerTable(1, Date.valueOf("2024-06-15"), 4);
         System.out.println(reservation);
         resto.reserverTable("Naigeon", "Adrien", "3630", reservation);
+        
     }
 }
