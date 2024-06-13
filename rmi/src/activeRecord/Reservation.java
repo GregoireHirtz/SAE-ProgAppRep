@@ -14,13 +14,16 @@ public class Reservation implements ActiveRecord {
     private String telephone;
     private int numrestau;
     private Date date;
+    private Date dateajout;
+    private int numtab;
+    private Reservation this.d;
+    private Reservation ;
 
 
-
-    public Reservation(String nom, String prenom, int nbpers, String telephone, int numrestau, Date date) {
-        if (nom==null || prenom==null || telephone==null || date==null)
+    public Reservation(String nom, String prenom, int nbpers, String telephone, int numrestau, Date date, Date dateajout, int numtab) {
+        if (nom==null || prenom==null || telephone==null || date==null || dateajout==null)
             throw new IllegalArgumentException("nom("+nom+"), prenom("+prenom+"), telephone("+telephone+") ou date("+date+") sont null");
-        if (nbpers<=0)
+        if (nbpers<=0||numtab<=0)
             throw new IllegalArgumentException("nbpers <= 0");
 
     // TODO pas de vérification que le numrestau bien valide :  a faire
@@ -31,22 +34,8 @@ public class Reservation implements ActiveRecord {
         this.telephone = telephone;
         this.numrestau = numrestau;
         this.date = date;
-    }
-
-    private Reservation(int numres, String nom, String prenom, int nbpers, String telephone, int numrestau) {
-        if (numres<=0)
-            throw new IllegalArgumentException("numres <= 0");
-        if (nom==null || prenom==null || telephone==null)
-            throw new IllegalArgumentException("nom, prenom, telephone == null");
-        if (nbpers<=0)
-            throw new IllegalArgumentException("nbpers <= 0");
-
-        this.numres = numres;
-        this.nom = nom;
-        this.prenom = prenom;
-        this.nbpers = nbpers;
-        this.telephone = telephone;
-        this.numrestau = numrestau;
+        this.dateajout = dateajout;
+        this.numtab = numtab;
     }
 
     public Reservation(Bd bd, int numres) throws SQLException{
@@ -66,6 +55,8 @@ public class Reservation implements ActiveRecord {
             this.nbpers = result.getInt("nbpers");
             this.telephone = result.getString("telephone");
             this.numrestau = result.getInt("numrestau");
+            this.date = result.getDate("date");
+            this.dateajout = result.getDate("dateajout");
         }else{
             throw new IllegalArgumentException("Le numero de reservation founrie n'est pas trouvé en bd");
         }
@@ -78,13 +69,13 @@ public class Reservation implements ActiveRecord {
         if (this.numres == 0) {
             // verifie si reserv pas deja dans la bd
 
-            String sql = "INSERT INTO reservation (nom, prenom, nbpers, telephone, numrestau) VALUES (?, ?, ?, ?, ?)";
-            bd.executeQuery(sql);
+            String sql = "INSERT INTO reservation (nom, prenom, nbpers, telephone, numrestau, date, dateajout, numtab) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            bd.executeQuery(sql, this.nom, this.prenom, this.nbpers, this.telephone, this.numrestau, this.numres, this.date, this.dateajout, this.numtab);
         }
 
         else{
-            String sql = "UPDATE reservation SET nom=?, prenom=?, nbpers=?, telephone=?, numrestau=? WHERE numres = ?";
-            bd.executeQuery(sql, this.nom, this.prenom, this.nbpers, this.telephone, this.numrestau, this.numres);
+            String sql = "UPDATE reservation SET nom=?, prenom=?, nbpers=?, telephone=?, numrestau=?, date=?, dateajout=?, numtab=? WHERE numres = ?";
+            bd.executeQuery(sql, this.nom, this.prenom, this.nbpers, this.telephone, this.numrestau, this.date, this.dateajout, this.numtab, this.numres);
         }
     }
 
@@ -96,6 +87,11 @@ public class Reservation implements ActiveRecord {
         String requete = "DELETE FROM reservation WHERE numres = ?";
         ResultSet r = bd.executeQuery(requete, this.numres);
     }
+
+    static public void nettoyerTickets(Bd bd){
+
+    }
+
 
     public String toString(){
         return "Réservation n°"+numres+" ("+this.nom+" "+this.prenom+" : "+this.nbpers+" "+this.telephone+" : "+this.numrestau+")";
