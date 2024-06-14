@@ -5,54 +5,27 @@ import activeRecord.Restaurant;
 import activeRecord.Tabl;
 import bd.Bd;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.SqlDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.ServerNotActiveException;
 import java.security.*;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import static Services.utils.Encryption_and_Json.*;
+
 public class ServiceResto extends RemoteServer implements ServiceRestaurant {
-
-    // ----------- static
-    public static ObjectMapper objectMapper = new ObjectMapper(); // Objet pour générer les Json
-
-    static { // modification de la mise en forme des dates dans le Json
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(Date.class, new SqlDateSerializer());
-        objectMapper.registerModule(module);
-    }
-
-    // ----------- attributes
-
     Bd bd;
     private ArrayList<Restaurant> restaurants;
     private HashMap<Integer, Restaurant> restaurantHashMap;
-    private transient KeyPair keys;
+    private final transient KeyPair keys;
 
     /**
      * Constructeur du service
-     * @param bd
+     * @param bd la base de donnée sur laquelle le service va effectuer ses requêtes
      */
     ServiceResto(Bd bd) throws NoSuchAlgorithmException {
         this.bd = bd;
@@ -254,9 +227,6 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             }
             return "";
 
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Data reading error");
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             throw new RuntimeException("Data reading error");
@@ -279,9 +249,9 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
 
     /**
      * Méthode pour réserver une table, nécessite un ticket obtenu via bloquerTable()
-     * @param nom
-     * @param prenom
-     * @param telephone
+     * @param nom Nom de l'utilisateur voulant réserver
+     * @param prenom Prénom de l'utilisateur voulant réserver
+     * @param telephone Numéro de téléphone de l'utilisateur voulant réserver
      * @param ticket Le ticket obtenu via la méthode bloquerTable()
      * @throws RemoteException En cas d'erreur RMI
      * @throws RuntimeException Pour toute autre erreur liée au code, notamment pour un ticket invalide
@@ -340,9 +310,6 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             reservation.setTelephone(telephone);
             reservation.save(bd);
 
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Ticket error, have you sent the right ticket ? Ticket: " + ticket);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             throw new RuntimeException("Ticket error, have you sent the right ticket ? Ticket: " + ticket);
@@ -363,97 +330,10 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
     }
 
     /** --------------------------------------------------------------------------------------------
-     * Méthode pour transformer un objet en string Json, en gérant les erreurs
-     * @param object l'objet à transformer en Json
-     * @return l'objet sous forme de Json
-     * @throws RuntimeException En cas d'erreur pendant la création du Json
-     */
-    private static String getJson(Object object) throws RuntimeException {
-        try {
-            return objectMapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error while processing JSON");
-        }
-    }
-
-    /**
-     * Méthode pour chiffrer un message à partir d'une clé RSA
-     * @param key clé publique de chiffrement
-     * @param message le message à chiffrer
-     * @return le message chiffré, au format base 64
-     * @throws RuntimeException En cas d'erreur de chiffrement (offusqué)
-     */
-    private static String encryptMessage(PublicKey key, String message) throws RuntimeException {
-        try {
-            Cipher encryptCipher = Cipher.getInstance("RSA");
-            encryptCipher.init(Cipher.ENCRYPT_MODE, key);
-            byte[] secretMessageBytes = message.getBytes(StandardCharsets.UTF_8);
-            byte[] encryptedMessageBytes = encryptCipher.doFinal(secretMessageBytes);
-            return Base64.getEncoder().encodeToString(encryptedMessageBytes);
-
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Erreur");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Erreur");
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Erreur");
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Erreur");
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Erreur");
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Erreur");
-        }
-
-    }
-
-    /**
-     * Méthode pour chiffrer un message à partir d'une clé RSA
-     * @param key clé privée de déchiffrement
-     * @param message le message à déchiffrer
-     * @return le message déchiffré
-     * @throws RuntimeException En cas d'erreur de déchiffrement (offusqué)
-     */
-    private static String decryptMessage(PrivateKey key, String message) throws RuntimeException {
-        try{
-            Cipher decryptCipher = Cipher.getInstance("RSA");
-            decryptCipher.init(Cipher.DECRYPT_MODE, key);
-            byte[] encryptedMessageBytes = Base64.getDecoder().decode(message);
-            byte[] decryptedMessageBytes = decryptCipher.doFinal(encryptedMessageBytes);
-            return new String(decryptedMessageBytes, StandardCharsets.UTF_8);
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Erreur");
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Erreur");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Erreur");
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Erreur");
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Erreur");
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Erreur");
-        }
-    }
-
-    /** --------------------------------------------------------------------------------------------
      * Méthode main pour visualiser les valeurs de retour des méthodes
      * @param args pas d'arguments requis
-     * @throws SQLException
-     * @throws RemoteException
+     * @throws SQLException Erreur SQL
+     * @throws RemoteException Erreur du service
      */
     public static void main (String[] args) throws SQLException, RemoteException, NoSuchAlgorithmException {
         String url = "jdbc:mariadb://localhost:3306/miaam";
