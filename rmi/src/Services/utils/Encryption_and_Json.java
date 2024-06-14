@@ -30,7 +30,8 @@ public class Encryption_and_Json {
         objectMapper.registerModule(module);
     }
 
-    private static final int SALT_LENGTH = 16;
+    private static final Random random = new SecureRandom();
+    private static final int SALT_LENGTH = random.nextInt(50) + 8;
     private static final String saltChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789?!_;:$&()";
 
     /**
@@ -38,7 +39,6 @@ public class Encryption_and_Json {
      * @return une chaîne de charactère de taille SALT_LENGTH aléatoire
      */
     private static String generateSalt() {
-        Random random = new SecureRandom();
         StringBuilder salt = new StringBuilder(SALT_LENGTH);
         for (int i = 0; i < SALT_LENGTH; i++) {
             salt.append(saltChars.charAt(random.nextInt(saltChars.length())));
@@ -112,7 +112,8 @@ public class Encryption_and_Json {
         keyPairGenerator.initialize(2048);
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
-        String originalMessage = "Bonjour le monde !";
+
+        String originalMessage = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         System.out.println("Message original: " + originalMessage);
 
         String encryptedMessage = encryptMessage(keyPair.getPublic(), originalMessage);
