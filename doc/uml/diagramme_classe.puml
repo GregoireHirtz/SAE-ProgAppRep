@@ -3,7 +3,6 @@
 
 package "rmi.activeRecord" {
 
-
     interface ActiveRecord {
         {abstract} + save(bd: Bd) : void
         {abstract} + delete(bd: Bd) : void
@@ -112,5 +111,102 @@ package "rmi.activeRecord" {
     ActiveRecord <|.. Tabl
 }
 
+
+
+
+package "rmi.bd" {
+    class Bd {
+        - connection: Connection
+        - updates: HashMap<String, String>
+        - final url: String
+        - final username: String
+
+        + Bd(url: String, username: String, password: String)
+
+        + executeQuery(query: String) : ResultSet
+        + executeQuery(query: String, params: Object[]) : ResultSet
+        + executeQuery(statement: PreparedStatement, query: String, params: Object[]) : ResultSet
+        + lockTable(tableName: String) : void
+        + lockTables(tableNames: String...) : void
+        + unlockTable() : void
+        + haveUpdate(tableName: String) : boolean
+        + haveUpdate() : boolean
+        - getUpdate(query: String, databaseName: String, tableName: String) : boolean
+        + getConnection() : Connection
+    }
+}
+
+
+package "rmi.services.interfaces" {
+
+    interface ServiceRestaurant {
+        + getRestaurants(): String
+        + getRestaurant(indexRestaurant: int): String
+        + getMenuRestaurant(indexRestaurant: int): String
+        + getTablesRestaurant(indexRestaurant: int): String
+        + getTablesLibreRestaurant(indexRestaurant: int, date: Date): String
+        + bloquerTable(indexRestaurant: int, date: Date, nbPersonnes: int): String
+        + reserverTable(nom: String, prenom: String, telephone: String, ticket: String): void
+        + ping(): String
+    }
+
+    interface ServiceHazards {
+        + getHazards(): String
+        + ping(): String
+    }
+}
+
+
+package "rmi.services" {
+
+    class ServiceHaz {
+        - serialVersionUID: long
+
+        + getHazards() : String
+        + ping() : String
+    }
+    ServiceHazards <|.. ServiceHaz
+
+    class ServiceResto {
+        - bd: Bd
+        - restaurants: ArrayList<Restaurant>
+        - restaurantHashMap: HashMap<Integer, Restaurant>
+        - keys: KeyPair
+        - serialVersionUID: long
+
+        + ServiceResto(bd: Bd)
+
+        + getRestaurants(): String
+        + getRestaurant(indexRestaurant: int): String
+        + getMenuRestaurant(indexRestaurant: int): String
+        + getTablesRestaurant(indexRestaurant: int): String
+        + getTablesLibreRestaurant(indexRestaurant: int, date: Date): String
+        + bloquerTable(indexRestaurant: int, date: Date, nbPersonnes: int): String
+        + reserverTable(nom: String, prenom: String, telephone: String, ticket: String)
+        + ping(): String
+    }
+    ServiceRestaurant <|. ServiceResto
+
+    class LancerServices {
+        {static} - port: int
+        {static} - final nomServiceRestaurant: String = "restaurants"
+        {static} - final nomServiceHazards: String = "hazards"
+        {static} - final url: String
+
+        {static} + main(args: String[]) : void
+    }
+    LancerServices --- ServiceResto
+    LancerServices -- ServiceHaz
+}
+
+package "rmi.services.utils" {
+    class Encryption_and_Json {
+        +objectMapper: ObjectMapper
+        +generateSalt(): String
+        +getJson(Object object): String
+        +encryptMessage(PublicKey key, String message): String
+        +decryptMessage(PrivateKey key, String message): String
+    }
+}
 
 @enduml
