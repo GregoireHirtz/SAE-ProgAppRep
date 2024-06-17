@@ -74,7 +74,7 @@ public class ApiController implements HttpHandler {
         else if (path.equals("/hazards")) {
             response = objectMapper.readValue("{\"error\":\"Failed to get hazards\"}", HashMap.class);
             try {
-                response = objectMapper.readValue(RmiServiceHazards.getInstance(this.address).getHazards(), new TypeReference<List<HashMap>>() {});
+                response = objectMapper.readValue(RmiServiceHazards.getInstance(this.address).getHazards(), HashMap.class);
             } catch (Exception e) {
                 e.printStackTrace();
 

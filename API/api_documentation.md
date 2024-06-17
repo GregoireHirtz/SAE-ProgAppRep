@@ -66,17 +66,7 @@
 ### Résultat (le ticket) :
 ```json
 {
-  "ticket":{
-    "date": "2024-06-30",
-    "numres": 0,
-    "nbpers": 2,
-    "dateajout": "2024-06-13",
-    "numtab": 10,
-    "numrestau": 1,
-    "telephone": "",
-    "nom": "",
-    "prenom": ""
-  }
+  "ticket":"macUFeZlN1t0NGRkb3l0YuZh2EmWRgAgeMLEkzDiq/ZgAiyE6Df7SjxiPxi3ornjbhLZiqTJJZ64pkuvSs74QD0js3iuEKfqWqhDMso/pTust1Nxb0BX19Zz/U0S4dAs3h3rTaIu3r05fUZApl+uJY8feInHCQ6uZv6cRvZ69tmLAXrs3teTQdcj//N3Phge7KHUGHfm+9hTyZsD8dUqdASSVVBiBSoTSkf9krBbPnXKtB0d0v9xSCdFlRC5duCH17qClPjKUSiNzib+sFqemhNLZRlgdY2+Ul/t56kvZzg9CjFgs9CcphTX1AaPJqRS/RMjypdkCQ526kz2nP/UQg=="
 }
 ```
 Si la réservation est impossible, le serveur renvoie un code 400 avec le message "Réservation impossible".
@@ -89,17 +79,7 @@ Si la réservation est impossible, le serveur renvoie un code 400 avec le messag
   "nom":"Jean",
   "prenom":"Dupont",
   "telephone":"0606060606",
-  "ticket":{
-    "date": "2024-06-30",
-    "numres": 0,
-    "nbpers": 2,
-    "dateajout": "2024-06-13",
-    "numtab": 10,
-    "numrestau": 1,
-    "telephone": "",
-    "nom": "",
-    "prenom": ""
-  }
+  "ticket":"macUFeZlN1t0NGRkb3l0YuZh2EmWRgAgeMLEkzDiq/ZgAiyE6Df7SjxiPxi3ornjbhLZiqTJJZ64pkuvSs74QD0js3iuEKfqWqhDMso/pTust1Nxb0BX19Zz/U0S4dAs3h3rTaIu3r05fUZApl+uJY8feInHCQ6uZv6cRvZ69tmLAXrs3teTQdcj//N3Phge7KHUGHfm+9hTyZsD8dUqdASSVVBiBSoTSkf9krBbPnXKtB0d0v9xSCdFlRC5duCH17qClPjKUSiNzib+sFqemhNLZRlgdY2+Ul/t56kvZzg9CjFgs9CcphTX1AaPJqRS/RMjypdkCQ526kz2nP/UQg=="
 }
 ```
 
