@@ -3,10 +3,10 @@ import {addMarkerRestau} from "./map.js";
 
 export async function loadRestaurant() {
     try {
-        //Les ressources pour les informations générales des stations
+        //On récupère les données associées aux restaurants
         //const restaurant = await loadResource("http://localhost:8080/restaurants");
 
-        // on ajoute chaque station à la carte
+        // on ajoute chaque restaurant à la carte
         addMarkerRestau(restaurants)
 
     } catch (error) {
