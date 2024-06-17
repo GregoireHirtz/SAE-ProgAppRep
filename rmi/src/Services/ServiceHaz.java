@@ -13,7 +13,7 @@ import java.rmi.server.RemoteServer;
 import java.rmi.server.ServerNotActiveException;
 import java.time.Duration;
 
-public class ServiceHaz extends RemoteServer {
+public class ServiceHaz extends RemoteServer implements ServiceHazards {
     public String getHazards() throws RemoteException, IOException, InterruptedException {
         try {
             System.out.println(getClientHost() + ": getHazards");
