@@ -119,35 +119,6 @@ public class Restaurant implements ActiveRecord{
         return numrestau;
     }
 
-    public void setNumrestau(int numrestau) {
-        this.numrestau = numrestau;
-    }
-
-    public String getNom() {
-        return nom;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-
     public List<Plat> getMenu(Bd bd)throws SQLException {
         if (bd == null)
             throw new IllegalArgumentException("bd == null");
@@ -190,9 +161,5 @@ public class Restaurant implements ActiveRecord{
             Tables.add(new Tabl(r.getInt("numtab"), r.getInt("nbplace"), r.getInt("numRestau")));
         }
         return  Tables;
-    }
-
-    public Object getPlats(Bd bd) {
-        return null;
     }
 }

@@ -1,0 +1,116 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+package "rmi.activeRecord" {
+
+
+    interface ActiveRecord {
+        {abstract} + save(bd: Bd) : void
+        {abstract} + delete(bd: Bd) : void
+    }
+
+    class Menu {
+        - numrestau: int
+        - numplat: int
+
+        + Menu(numrestau: int, numplat: int)
+
+        + save(bd: Bd) : void
+        + delete(bd: Bd) : void
+
+        + toString() : String
+    }
+    ActiveRecord <|.. Menu
+
+    class Plat {
+        - numplat : int
+        - libelle : String
+        - type : String
+        - prixunit : double
+
+        + save(bd: Bd) : void
+        + delete(bd: Bd) : void
+
+        + Plat(libelle: String, type: String, prixunit: double)
+        + Plat(bd: Bd, numplat: int)
+
+        + toString() : String
+    }
+    ActiveRecord <|.. Plat
+
+    class Reservation {
+
+        - numres : int
+        - nom : Sting
+        - prenom : String
+        - nbpers : int
+        - telephone : String
+        - numrestau : int
+        - date : Date
+        - dateajout : Date
+        - numtab : int
+
+        + Reservation(nom: String, prenom: String, nbpers: int, telephone: \nString, numrestau: int, date: Date, dateajout: Date, numtab: int)
+        + Reservation(bd: Bd, numres: int)
+
+        + save(bd: Bd) : void
+        + delete(bd: Bd) : void
+
+        + nettoyerTickets(bd: Bd) : void
+        + getAll(bd: Bd) : ArrayList<Reservation>
+        + equals(other: Reservation) : boolean
+        + setNom(nom: String) : void
+        + setPrenom(prenom: String) : void
+        + setTelephone(telephone: String) : void
+        + getDateajout() : Date
+        + setDateajout(dateajout: Date) : void
+        + toString() : String
+    }
+    ActiveRecord <|.. Reservation
+
+    class Restaurant {
+        - numrestau : int
+        - nom : String
+        - latitude : Double
+        - longitude : Double
+
+        + save(bd: Bd) : void
+        + delete(bd: Bd) : void
+
+        + Restaurant(nom: String, latitude: Double, longitude: Double)
+        + Restaurant(bd: Bd, numrestau: int)
+        # Restaurant(numrestau: int, nom: String, latitude: Double, longitude: Double)
+
+        {static} + getAll(bd: Bd) : ArrayList<Restaurant>
+        + getNumrestau() : int
+        + getMenu(bd: Bd) : List<Plat>
+        + getTables(bd: Bd) : List<Tabl>
+        + getTablesLibre(bd: Bd, date: Date) : List<Tabl>
+        + toString() : String
+    }
+    ActiveRecord <|.. Restaurant
+
+    class Tabl {
+        - numtab : int
+        - nbplace : int
+        - numrestau : int
+
+        + Tabl(nbplace: int, numrestau: int)
+        + Tabl(bd: Bd, numtab: int)
+        #protected + Tabl(numtab: int, nbplace: int, numrestau: int)
+
+        + save(bd: Bd) : void
+        + delete(bd: Bd) : void
+        + getNumtab() : int
+        + setNumtab(numtab: int) : void
+        + getNbplace() : int
+        + setNbplace(nbplace: int) : void
+        + getNumrestau() : int
+        + setNumrestau(numrestau: int) : void
+        + toString() : String
+    }
+    ActiveRecord <|.. Tabl
+}
+
+
+@enduml
