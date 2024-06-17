@@ -78,36 +78,4 @@ public class Plat implements ActiveRecord{
     public String toString(){
         return "- ["+this.numplat+"] " +this.libelle + " (" + this.type + ") - " + this.prixunit + "€" + " - " + " restants";
     }
-
-    public int getNumplat() {
-        return numplat;
-    }
-
-    public void setNumplat(int numplat) {
-        this.numplat = numplat;
-    }
-
-    public String getLibelle() {
-        return libelle;
-    }
-
-    public void setLibelle(String libelle) {
-        this.libelle = libelle;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public double getPrixunit() {
-        return prixunit;
-    }
-
-    public void setPrixunit(double prixunit) {
-        this.prixunit = prixunit;
-    }
 }
