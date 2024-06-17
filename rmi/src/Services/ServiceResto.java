@@ -1,53 +1,39 @@
-package ServiceRestaurant;
+package Services;
 
 import activeRecord.Reservation;
 import activeRecord.Restaurant;
 import activeRecord.Tabl;
 import bd.Bd;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.SqlDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.ServerNotActiveException;
+import java.security.*;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import static Services.utils.Encryption_and_Json.*;
+
 public class ServiceResto extends RemoteServer implements ServiceRestaurant {
-
-    // ----------- static
-    public static ObjectMapper objectMapper = new ObjectMapper();
-
-    static { // modification de la mise en forme des dates dans le Json
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(Date.class, new SqlDateSerializer());
-        objectMapper.registerModule(module);
-    }
-
-    // ----------- attributes
-
     Bd bd;
     private ArrayList<Restaurant> restaurants;
     private HashMap<Integer, Restaurant> restaurantHashMap;
+    private final transient KeyPair keys;
 
     /**
      * Constructeur du service
-     * @param bd
+     * @param bd la base de donnée sur laquelle le service va effectuer ses requêtes
      */
-    ServiceResto(Bd bd) {
+    ServiceResto(Bd bd) throws NoSuchAlgorithmException {
         this.bd = bd;
+
+        // Une nouvelle paire RSA est générée à chaque nouveau service
+        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+        generator.initialize(2048);
+        this.keys = generator.generateKeyPair();
     }
 
     /**
@@ -58,9 +44,13 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
      */
     public String getRestaurants() throws RemoteException, RuntimeException {
         try {
-            System.out.println(LancerRestaurant.ANSI_CYAN + getClientHost() + LancerRestaurant.ANSI_RESET + ": getRestaurants");
+            System.out.println(LancerServices.ANSI_CYAN + getClientHost() + LancerServices.ANSI_RESET + ": getRestaurants");
             if(bd.haveUpdate("restaurant")) {
                 this.restaurants = Restaurant.getAll(bd);
+
+                // On sauvegarde les résultats dans une hashmap
+                // Pour que les méthodes utilisant 1 restaurant
+                // Soient rapides
                 this.restaurantHashMap = new HashMap<>();
                 for (Restaurant restaurant : restaurants) {
                     restaurantHashMap.put(restaurant.getNumrestau(), restaurant);
@@ -85,7 +75,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
      */
     public String getRestaurant(int indexRestaurant) throws RemoteException, RuntimeException {
         try {
-            System.out.println(LancerRestaurant.ANSI_CYAN + getClientHost() + LancerRestaurant.ANSI_RESET + ": getRestaurant " + indexRestaurant);
+            System.out.println(LancerServices.ANSI_CYAN + getClientHost() + LancerServices.ANSI_RESET + ": getRestaurant " + indexRestaurant);
         } catch (ServerNotActiveException e) {
             throw new RuntimeException(e);
         }
@@ -94,7 +84,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             throw new RuntimeException("indexRestaurant <= 0");
         }
 
-        getRestaurants();
+        getRestaurants(); // Mise à jour des données locales
 
         return getJson(restaurantHashMap.get(indexRestaurant));
     }
@@ -108,7 +98,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
      */
     public String getMenuRestaurant(int indexRestaurant) throws RemoteException, RuntimeException {
         try {
-            System.out.println(LancerRestaurant.ANSI_CYAN + getClientHost() + LancerRestaurant.ANSI_RESET + ": getMenuRestaurant " + indexRestaurant);
+            System.out.println(LancerServices.ANSI_CYAN + getClientHost() + LancerServices.ANSI_RESET + ": getMenuRestaurant " + indexRestaurant);
         } catch (ServerNotActiveException e) {
             throw new RuntimeException(e);
         }
@@ -117,7 +107,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             throw new RuntimeException("indexRestaurant <= 0");
         }
 
-        getRestaurants();
+        getRestaurants(); // Mise à jour des données locales
 
         try {
             return getJson(restaurantHashMap.get(indexRestaurant).getMenu(bd));
@@ -136,7 +126,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
      */
     public String getTablesRestaurant(int indexRestaurant) throws RemoteException, RuntimeException {
         try {
-            System.out.println(LancerRestaurant.ANSI_CYAN + getClientHost() + LancerRestaurant.ANSI_RESET + ": getTablesRestaurant " + indexRestaurant);
+            System.out.println(LancerServices.ANSI_CYAN + getClientHost() + LancerServices.ANSI_RESET + ": getTablesRestaurant " + indexRestaurant);
         } catch (ServerNotActiveException e) {
             throw new RuntimeException(e);
         }
@@ -146,7 +136,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             throw new RuntimeException("indexRestaurant <= 0");
         }
 
-        getRestaurants();
+        getRestaurants(); // Mise à jour des données locales
 
         try {
             return getJson(restaurantHashMap.get(indexRestaurant).getTables(bd));
@@ -166,7 +156,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
      */
     public String getTablesLibreRestaurant(int indexRestaurant, Date date) throws RemoteException, RuntimeException{
         try {
-            System.out.println(LancerRestaurant.ANSI_CYAN + getClientHost() + LancerRestaurant.ANSI_RESET + ": getTablesLibreRestaurant " + indexRestaurant);
+            System.out.println(LancerServices.ANSI_CYAN + getClientHost() + LancerServices.ANSI_RESET + ": getTablesLibreRestaurant " + indexRestaurant);
         } catch (ServerNotActiveException e) {
             throw new RuntimeException(e);
         }
@@ -175,7 +165,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
             throw new RuntimeException("indexRestaurant <= 0");
         }
 
-        getRestaurants();
+        getRestaurants(); // Mise à jour des données locales
 
         try {
             return getJson(restaurantHashMap.get(indexRestaurant).getTablesLibre(bd, date));
@@ -186,7 +176,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
     }
 
     /**
-     * Méthode pour bloquer une table et empêcher une autre personne de la réserver
+     * Méthode pour bloquer une table et empêcher les autres utilisateurs de la réserver
      * @param indexRestaurant Index du restaurant où se trouve la table
      * @param date Date à laquelle on veut réserver la table
      * @param nbPersonnes Nombre de personnes dans la réservation
@@ -196,7 +186,7 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
      */
     public String bloquerTable(int indexRestaurant, Date date, int nbPersonnes) throws RemoteException, RuntimeException {
         try {
-            System.out.println(LancerRestaurant.ANSI_CYAN + getClientHost() + LancerRestaurant.ANSI_RESET + ": bloquerTable indexRestaurant:" + indexRestaurant + " date:" + date + " nbPersonnes:" + nbPersonnes);
+            System.out.println(LancerServices.ANSI_CYAN + getClientHost() + LancerServices.ANSI_RESET + ": bloquerTable indexRestaurant:" + indexRestaurant + " date:" + date + " nbPersonnes:" + nbPersonnes);
         } catch (ServerNotActiveException e) {
             throw new RuntimeException(e);
         }
@@ -220,45 +210,64 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
 
         try {
             bd.lockTables("reservation", "restaurant", "tabl");
+
+            // Récupération des tables libres via notre propre méthode
             String json_tablesLibre = getTablesLibreRestaurant(indexRestaurant, date);
             Tabl[] tables = objectMapper.readValue(json_tablesLibre, Tabl[].class);
+
+            // Recherche d'une table libre correspondant aux critères de recherches
             for(Tabl table : tables) {
                 if(table.getNbplace() >= nbPersonnes) {
                     Reservation reservation = new Reservation("", "", nbPersonnes, "", indexRestaurant, date, new Date(System.currentTimeMillis()), table.getNumtab());
                     reservation.save(bd);
                     bd.unlockTable();
-                    return getJson(reservation);
+                    // Chiffrement du ticket
+                    return encryptMessage(keys.getPublic(), getJson(reservation));
                 }
             }
             return "";
 
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Data reading error");
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             throw new RuntimeException("Data reading error");
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Database error, a parameter might not exist");
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            try {
+                // Il faut débloquer la table dans toutes les situations
+                bd.unlockTable();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Database error");
+            }
         }
 
     }
 
     /**
      * Méthode pour réserver une table, nécessite un ticket obtenu via bloquerTable()
-     * @param nom
-     * @param prenom
-     * @param telephone
+     * @param nom Nom de l'utilisateur voulant réserver
+     * @param prenom Prénom de l'utilisateur voulant réserver
+     * @param telephone Numéro de téléphone de l'utilisateur voulant réserver
      * @param ticket Le ticket obtenu via la méthode bloquerTable()
      * @throws RemoteException En cas d'erreur RMI
      * @throws RuntimeException Pour toute autre erreur liée au code, notamment pour un ticket invalide
      */
     public void reserverTable(String nom, String prenom, String telephone, String ticket) throws RemoteException, RuntimeException {
         try {
-            System.out.println(LancerRestaurant.ANSI_CYAN + getClientHost() + LancerRestaurant.ANSI_RESET + ": reserverTable personne:" + nom + " " + prenom + " telephone:" + telephone + " ticket:" + ticket);
+            System.out.println(LancerServices.ANSI_CYAN + getClientHost() + LancerServices.ANSI_RESET + ": reserverTable personne:" + nom + " " + prenom + " telephone:" + telephone + " ticket:" + ticket);
         } catch (ServerNotActiveException e) {
             throw new RuntimeException(e);
+        }
+
+        // Avant toutes choses, déchiffrer le ticket
+        try {
+            ticket = decryptMessage(keys.getPrivate(), ticket);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
         }
 
         if(ticket.isEmpty()) {
@@ -272,13 +281,14 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         try {
             Reservation reservation = objectMapper.readValue(ticket, Reservation.class);
 
-            System.out.println(reservation);
+            // Seuls les bloquages disposent d'une date d'ajout
             if(reservation.getDateajout() == null) {
                 throw new RuntimeException("Invalid ticket");
             }
 
             try {
                 boolean invalid = true;
+                // On cherche si le ticket correspond à une entrée pour éviter des ajouts non controller
                 ArrayList<Reservation> reservations = Reservation.getAll(bd);
                 for(Reservation myRes : reservations) {
                     if(myRes.equals(reservation)) {
@@ -293,15 +303,13 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
                 throw new RuntimeException("Error while getting database data");
             }
 
-
+            // ticket valide → On le transforme en réservation définitive
             reservation.setDateajout(null);
             reservation.setNom(nom);
             reservation.setPrenom(prenom);
             reservation.setTelephone(telephone);
             reservation.save(bd);
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Ticket error, have you sent the right ticket ? Ticket: " + ticket);
+
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             throw new RuntimeException("Ticket error, have you sent the right ticket ? Ticket: " + ticket);
@@ -321,28 +329,13 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         return getClientHost();
     }
 
-    /**
-     * Méthode pour transformer un objet en string Json, en gérant les erreurs
-     * @param object l'objet à transformer en Json
-     * @return l'objet sous forme de Json
-     * @throws RuntimeException En cas d'erreur pendant la création du Json
-     */
-    private static String getJson(Object object) throws RuntimeException {
-        try {
-            return objectMapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error while processing JSON");
-        }
-    }
-
     /** --------------------------------------------------------------------------------------------
      * Méthode main pour visualiser les valeurs de retour des méthodes
      * @param args pas d'arguments requis
-     * @throws SQLException
-     * @throws RemoteException
+     * @throws SQLException Erreur SQL
+     * @throws RemoteException Erreur du service
      */
-    public static void main (String[] args) throws SQLException, RemoteException {
+    public static void main (String[] args) throws SQLException, RemoteException, NoSuchAlgorithmException {
         String url = "jdbc:mariadb://localhost:3306/miaam";
         Scanner sc = new Scanner(System.in);
         System.out.println("Connexion à la base de donnée :");
@@ -365,6 +358,5 @@ public class ServiceResto extends RemoteServer implements ServiceRestaurant {
         reservation = resto.bloquerTable(1, Date.valueOf("2024-06-15"), 4);
         System.out.println(reservation);
         resto.reserverTable("Naigeon", "Adrien", "3630", reservation);
-
     }
 }

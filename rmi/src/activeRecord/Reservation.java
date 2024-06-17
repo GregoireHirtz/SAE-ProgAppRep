@@ -2,10 +2,7 @@ package activeRecord;
 
 import bd.Bd;
 
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class Reservation implements ActiveRecord {
@@ -70,7 +67,12 @@ public class Reservation implements ActiveRecord {
             // verifie si reserv pas deja dans la bd
 
             String sql = "INSERT INTO reservation (nom, prenom, nbpers, telephone, numrestau, date, dateajout, numtab) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            bd.executeQuery(sql, this.nom, this.prenom, this.nbpers, this.telephone, this.numrestau, this.date, this.dateajout, this.numtab);
+            PreparedStatement statement = bd.getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            ResultSet resultSet = bd.executeQuery(statement, sql, this.nom, this.prenom, this.nbpers, this.telephone, this.numrestau, this.date, this.dateajout, this.numtab);
+
+            if (resultSet.next()) {
+                this.numres = resultSet.getInt(1);
+            }
         }
 
         else{

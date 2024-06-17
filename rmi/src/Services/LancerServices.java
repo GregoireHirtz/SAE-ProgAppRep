@@ -1,9 +1,8 @@
-package ServiceRestaurant;
+package Services;
 
 import activeRecord.Reservation;
 import bd.Bd;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.ConnectException;
 import java.rmi.RemoteException;
@@ -11,14 +10,16 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-public class LancerRestaurant {
+public class LancerServices {
     static int port = 1659;
-    static String nomService = "restaurants";
-    static String url = "jdbc:mariadb://localhost:3306/miaam";
+    static final String nomServiceRestaurant = "restaurants";
+    static final String nomServiceHazards = "hazards";
+    static final String url = "jdbc:mariadb://localhost:3306/miaam";
 
 
     public static final String ANSI_RESET = "\u001B[0m";
@@ -31,13 +32,10 @@ public class LancerRestaurant {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
-    public static void main (String args[]) throws RemoteException, UnknownHostException, SQLException, InterruptedException, ServerNotActiveException {
+    public static void main (String args[]) throws RemoteException, UnknownHostException, SQLException, InterruptedException, ServerNotActiveException, NoSuchAlgorithmException {
 
         if (args.length > 0) {
             port = Integer.parseInt(args[0]);
-        }
-        if (args.length > 1) {
-            nomService = args[1];
         }
 
         Scanner sc = new Scanner(System.in);
@@ -52,11 +50,13 @@ public class LancerRestaurant {
 
         //---Création des objets
         ServiceResto serviceResto = new ServiceResto(bd);
+        ServiceHaz serviceHaz = new ServiceHaz();
 
         //crée une interface exportable et l'assigne à un port automatique (0)
-        ServiceRestaurant service = (ServiceRestaurant) UnicastRemoteObject.exportObject(serviceResto, 0);
+        ServiceRestaurant serviceRestaurant = (ServiceRestaurant) UnicastRemoteObject.exportObject(serviceResto, 0);
+        ServiceHazards serviceHazards = (ServiceHazards) UnicastRemoteObject.exportObject(serviceHaz, 0);
 
-        //---Enregistrement dans l'annuaire
+        //---Récupération de l'annuaire
         Registry reg = LocateRegistry.getRegistry(port);
         try{
             reg.list();
@@ -69,9 +69,12 @@ public class LancerRestaurant {
         //Nettoyage de possible relicats
         Reservation.nettoyerTickets(bd);
 
-        //ajout du service a l'annuaire
-        reg.rebind(nomService, service);
-        System.out.println("Service créé, IP:" +  ANSI_CYAN + service.ping() + ANSI_RESET + " PORT:" + ANSI_CYAN + port + ANSI_RESET + " NOM:" + ANSI_CYAN + nomService + ANSI_RESET);
+        //ajout des services a l'annuaire
+        reg.rebind(nomServiceRestaurant, serviceRestaurant);
+        System.out.println("Services créé, IP:" +  ANSI_CYAN + serviceRestaurant.ping() + ANSI_RESET + " PORT:" + ANSI_CYAN + port + ANSI_RESET + " NOM:" + ANSI_CYAN + nomServiceRestaurant + ANSI_RESET);
+
+        reg.rebind(nomServiceHazards, serviceHaz);
+        System.out.println("Services créé, IP:" +  ANSI_CYAN + serviceHazards.ping() + ANSI_RESET + " PORT:" + ANSI_CYAN + port + ANSI_RESET + " NOM:" + ANSI_CYAN + nomServiceHazards + ANSI_RESET);
 
         //Toutes les minutes, vérifie la validité des tickets
         while (true) {

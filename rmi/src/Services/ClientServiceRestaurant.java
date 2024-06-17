@@ -1,4 +1,4 @@
-package ServiceRestaurant;
+package Services;
 
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;

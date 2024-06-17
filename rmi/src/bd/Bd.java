@@ -37,6 +37,12 @@ public class Bd {
         if (query==null) throw new NullPointerException("la requête ne peut pas être null");
 
         PreparedStatement statement = this.connection.prepareStatement(query);
+        return executeQuery(statement, query, params);
+    }
+
+    public ResultSet executeQuery(PreparedStatement statement, String query, Object... params) throws SQLException{
+        if (query==null) throw new NullPointerException("la requête ne peut pas être null");
+
         for (int i = 0; i < params.length; i++) {
             statement.setObject(i+1, params[i]);
         }
@@ -44,7 +50,11 @@ public class Bd {
         // si UPDATE, INSERT, DELETE, LOCK, UNLOCK
         if (query.toUpperCase().startsWith("UPDATE") || query.toUpperCase().startsWith("INSERT") || query.toUpperCase().startsWith("DELETE") || query.toUpperCase().startsWith("LOCK") || query.toUpperCase().startsWith("UNLOCK")){
             statement.executeUpdate();
-            return null;
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                return generatedKeys;
+            } catch (Exception e) {
+                return null;
+            }
         }
         else {
             ResultSet rs = statement.executeQuery();
