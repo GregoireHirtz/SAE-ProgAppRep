@@ -1,18 +1,20 @@
+import services.ServiceRestaurant;
+
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-public class RmiServiceHazards {
-    private static Services.ServiceHazards instance;
+public class RmiServiceRestaurant {
+    private static ServiceRestaurant instance;
 
-    public static Services.ServiceHazards getInstance(String address) throws RemoteException {
+    public static ServiceRestaurant getInstance(String address) throws RemoteException {
         if (instance == null) {
             Registry reg = LocateRegistry.getRegistry(address, 1659);
 
             //Recupere l'interface distante dans l'annuaire de la machine (distant)
             try {
-                instance = (Services.ServiceHazards) reg.lookup("hazards");
+                instance = (ServiceRestaurant) reg.lookup("restaurants");
             } catch (NotBoundException e) {
                 e.printStackTrace();
             }
@@ -20,6 +22,6 @@ public class RmiServiceHazards {
         return instance;
     }
 
-    private RmiServiceHazards() {
+    private RmiServiceRestaurant() {
     }
 }

@@ -27,7 +27,7 @@ public class ApiController implements HttpHandler {
         switch (requestMethod) {
             case "GET" -> handleGetRequest(exchange, path);
             case "POST" -> handlePostRequest(exchange, path);
-            case null, default -> exchange.sendResponseHeaders(405, -1); // 405 Method Not Allowed
+            default -> exchange.sendResponseHeaders(405, -1); // 405 Method Not Allowed
         }
     }
 

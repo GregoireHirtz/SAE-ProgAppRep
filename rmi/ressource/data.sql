@@ -21,7 +21,7 @@ CREATE TABLE reservation (
 
 -- Table restaurent
 CREATE TABLE restaurant (
-        numrestau INT(4) AUTO_INCREMENT,
+    numrestau INT(4) AUTO_INCREMENT,
     nom VARCHAR(32),
     latitude DOUBLE,
     longitude DOUBLE,
@@ -61,7 +61,10 @@ CREATE TABLE menu (
 ALTER TABLE reservation
     ADD CONSTRAINT fk_reservation_restaurant
         FOREIGN KEY (numrestau)
-            REFERENCES restaurant(numrestau);
+            REFERENCES restaurant(numrestau),
+    ADD CONSTRAINT fk_reservation_table
+        FOREIGN KEY (numtab)
+            REFERENCES tabl(numtab);
 
 ALTER TABLE commande
     ADD CONSTRAINT fk_commande_reservation
@@ -157,7 +160,7 @@ INSERT INTO reservation (nom, prenom, nbpers, telephone, date, numrestau, numtab
     ('Doe', 'John', 2, '1234567890', '2024-06-15', 1, 11), -- Réservation au Le Petit Parisien
     ('Smith', 'Jane', 4, '9876543210', '2024-06-16', 2, 13), -- Réservation au The London Pub
     ('Garcia', 'Maria', 3, '4561237890', '2024-06-17', 3, 15), -- Réservation à La Bella Italia
-    ('Sato', 'Takashi', 2, '7894561230', '2024-06-18', 4, 18); -- Réservation au Tokyo Sushi House
+    ('Sato', 'Takashi', 2, '7894561230', '2024-06-18', 4, 18);
 
 INSERT INTO commande (numres, numplat, quantite)
 VALUES
