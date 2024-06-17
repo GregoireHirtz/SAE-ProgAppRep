@@ -91,9 +91,9 @@ public class Reservation implements ActiveRecord {
     }
 
     static public void nettoyerTickets(Bd bd) throws SQLException{
-        String sql = "DELETE FROM reservation WHERE dateajout < NOW() - INTERVAL 15 MINUTE";
+        String sql = "DELETE FROM reservation WHERE dateajout < NOW() - INTERVAL 5 MINUTE";
         try (Statement stmt = bd.getConnection().createStatement()) {
-            stmt.execute(sql);
+            //stmt.execute(sql);
         }
     }
 

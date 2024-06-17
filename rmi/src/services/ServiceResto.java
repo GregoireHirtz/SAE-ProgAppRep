@@ -1,4 +1,4 @@
-package Services;
+package services;
 
 import activeRecord.Reservation;
 import activeRecord.Restaurant;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import static Services.utils.Encryption_and_Json.*;
+import static services.utils.Encryption_and_Json.*;
 
 public class ServiceResto extends RemoteServer implements ServiceRestaurant {
     Bd bd;

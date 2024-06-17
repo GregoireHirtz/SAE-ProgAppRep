@@ -1,7 +1,5 @@
 package bd;
 
-import activeRecord.Restaurant;
-
 import java.sql.*;
 import java.util.HashMap;
 
