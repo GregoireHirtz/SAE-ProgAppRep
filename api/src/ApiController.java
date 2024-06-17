@@ -89,8 +89,10 @@ public class ApiController implements HttpHandler {
         byte[] bytes = jsonString.getBytes(StandardCharsets.UTF_8);
 
         exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET,POST");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*"); // Permettre l'accès depuis n'importe quelle origine
+        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        exchange.getResponseHeaders().add("Access-Control-Request-Methods", "*");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
         exchange.sendResponseHeaders(200, bytes.length);
 
         OutputStream os = exchange.getResponseBody();
@@ -107,8 +109,7 @@ public class ApiController implements HttpHandler {
         String requestBody = scanner.hasNext() ? scanner.next() : "";
         Map<String, Object> response = new HashMap<>();
 
-        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET,POST");
+
 
         // Handle the path
         if (path.startsWith("/tables")) {
@@ -130,11 +131,19 @@ public class ApiController implements HttpHandler {
                     if (ticket.isEmpty()) {
                         response.put("error", "Réservation impossible");
                         exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+                        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*"); // Permettre l'accès depuis n'importe quelle origine
+                        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                        exchange.getResponseHeaders().add("Access-Control-Request-Methods", "*");
+                        exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
                         exchange.sendResponseHeaders(400, 0);
                     }
                     // On renvoie le ticket de réservation au client
                     response.put("ticket", ticket);
                     exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+                    exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*"); // Permettre l'accès depuis n'importe quelle origine
+                    exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                    exchange.getResponseHeaders().add("Access-Control-Request-Methods", "*");
+                    exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
                     exchange.sendResponseHeaders(200, 0);
                 }
                 // S'il y a 2 arguments, c'est-à-dire /tables
@@ -149,23 +158,39 @@ public class ApiController implements HttpHandler {
                     }
                     RmiServiceRestaurant.getInstance(this.address).reserverTable(nom, prenom, telephone, ticket);
                     exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+                    exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*"); // Permettre l'accès depuis n'importe quelle origine
+                    exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                    exchange.getResponseHeaders().add("Access-Control-Request-Methods", "*");
+                    exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
                     exchange.sendResponseHeaders(200, 0);
 
                 }
                 else {
                     response.put("error", "Invalid path or arguments");
                     exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+                    exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*"); // Permettre l'accès depuis n'importe quelle origine
+                    exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                    exchange.getResponseHeaders().add("Access-Control-Request-Methods", "*");
+                    exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
                     exchange.sendResponseHeaders(404, 0);
                 }
             } catch (Exception e) {
                 response.put("error", e.getMessage());
                 exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*"); // Permettre l'accès depuis n'importe quelle origine
+                exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                exchange.getResponseHeaders().add("Access-Control-Request-Methods", "*");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
                 exchange.sendResponseHeaders(400, 0);
             }
         }
         else {
             response.put("error", "Invalid path");
             exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*"); // Permettre l'accès depuis n'importe quelle origine
+            exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+            exchange.getResponseHeaders().add("Access-Control-Request-Methods", "*");
+            exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
             exchange.sendResponseHeaders(404, 0);
         }
 
@@ -173,7 +198,12 @@ public class ApiController implements HttpHandler {
         String jsonString = objectMapper.writeValueAsString(response);
 
         byte[] bytes = jsonString.getBytes(StandardCharsets.UTF_8);
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*"); // Permettre l'accès depuis n'importe quelle origine
+        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        exchange.getResponseHeaders().add("Access-Control-Request-Methods", "*");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
         OutputStream os = exchange.getResponseBody();
+
         os.write(bytes);
         os.close();
     }

@@ -3,6 +3,7 @@ package services;
 import activeRecord.Reservation;
 import bd.Bd;
 
+import javax.xml.datatype.DatatypeConstants;
 import java.net.UnknownHostException;
 import java.rmi.ConnectException;
 import java.rmi.RemoteException;
@@ -16,7 +17,7 @@ import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class LancerServices {
-    static int port = 1659;
+    static int port = 1099;
     static final String nomServiceRestaurant = "restaurants";
     static final String nomServiceHazards = "hazards";
     static final String url = "jdbc:mariadb://webetu.iutnc.univ-lorraine.fr:3306/hirtz44u";
@@ -41,9 +42,9 @@ public class LancerServices {
         Scanner sc = new Scanner(System.in);
         System.out.println("Connexion à la base de donnée :");
         System.out.print("-Utilisateur: ");
-        String user = "hirtz44u"; //sc.nextLine();
+        String user = sc.nextLine();
         System.out.print("-Mot de passe: ");
-        String password = "password"; //sc.nextLine();
+        String password = sc.nextLine();
 
         //---Connexion à la base de donnée
         Bd bd = new Bd(url, user, password);
@@ -78,6 +79,7 @@ public class LancerServices {
 
         //Toutes les minutes, vérifie la validité des tickets
         while (true) {
+
             TimeUnit.MINUTES.sleep(1);
             Reservation.nettoyerTickets(bd);
         }

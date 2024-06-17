@@ -5,7 +5,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        Bd bd = new Bd("jdbc:mariadb://localhost:3306/miaam", "user", "password");
+        Bd bd = new Bd("jdbc:mariadb://webetu.iutnc.univ-lorraine.fr:3306/hirtz44u", "hirtz44u", "password");
 
         Restaurant r = new Restaurant(bd, 2);
         System.out.println(r);

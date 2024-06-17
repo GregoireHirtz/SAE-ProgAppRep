@@ -3,3 +3,4 @@
 *.class
 *.iml
 /src/META-INF/
+/lib/
