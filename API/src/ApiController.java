@@ -89,6 +89,8 @@ public class ApiController implements HttpHandler {
         byte[] bytes = jsonString.getBytes(StandardCharsets.UTF_8);
 
         exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET,POST");
         exchange.sendResponseHeaders(200, bytes.length);
 
         OutputStream os = exchange.getResponseBody();
@@ -104,6 +106,9 @@ public class ApiController implements HttpHandler {
         Scanner scanner = new Scanner(exchange.getRequestBody()).useDelimiter("\\A");
         String requestBody = scanner.hasNext() ? scanner.next() : "";
         Map<String, Object> response = new HashMap<>();
+
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET,POST");
 
         // Handle the path
         if (path.startsWith("/tables")) {
