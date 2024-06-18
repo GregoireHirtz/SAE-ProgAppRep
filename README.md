@@ -13,6 +13,12 @@
 
 <br>
 
+## RMI
+
+
+
+
+
 
 ## BASE DE DONNEE
 
@@ -74,6 +80,24 @@
 </details>
 
 <br>
+
+### Transactionnelle
+
+Notre application permet la réservation d'une table via la page web. Cette fonctionnalité peut rapidement poser certains problèmes transactionnels. Pour répondre à cela, nous avons décidé de partir sur la méthode suivante :
+
+1. Une personne choisit un restaurant, une date donnée et un nombre de personnes. 
+2. Le service bloque les tables dans les bases de données `Restaurant`, `Reservation` et `Tabl`. 
+3. Le service de réservation vérifie si une table est disponible. 
+4. La table est réservée pour une durée de 15 minutes, permettant à l'utilisateur de finaliser sa réservation. 
+5. Le service libère les tables. 
+6. Le client finalise sa réservation et envoie le reste des informations. 
+7. Le service met à jour la réservation et la marque comme valide.
+
+Pour supprimer les tâches non finalisées, nous avons mis en place un attribut `dateajout` dans la base de 
+données avec une valeur lorsqu'une tâche est juste bloquée et null si la tâche est validée. 
+Par la suite, de façon récurrente, nous parcourons la table reservation et les insertions 
+avec un `dateajout` non nul et dépassant 15 minutes sont supprimées.
+
 
 ## API HTTP
 
