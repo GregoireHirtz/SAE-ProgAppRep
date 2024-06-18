@@ -1,0 +1,214 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+left to right direction
+
+package "rmi.activeRecord" {
+
+    interface ActiveRecord {
+        {abstract} + save(bd: Bd) : void
+        {abstract} + delete(bd: Bd) : void
+    }
+
+    class Menu {
+        - numrestau: int
+        - numplat: int
+
+        + Menu(numrestau: int, numplat: int)
+
+        + save(bd: Bd) : void
+        + delete(bd: Bd) : void
+
+        + toString() : String
+    }
+    ActiveRecord <|.. Menu
+
+    class Plat {
+        - numplat : int
+        - libelle : String
+        - type : String
+        - prixunit : double
+
+        + save(bd: Bd) : void
+        + delete(bd: Bd) : void
+
+        + Plat(libelle: String, type: String, prixunit: double)
+        + Plat(bd: Bd, numplat: int)
+
+        + toString() : String
+    }
+    ActiveRecord <|.. Plat
+
+    class Reservation {
+
+        - numres : int
+        - nom : Sting
+        - prenom : String
+        - nbpers : int
+        - telephone : String
+        - numrestau : int
+        - date : Date
+        - dateajout : Date
+        - numtab : int
+
+        + Reservation(nom: String, prenom: String, nbpers: int, telephone: \nString, numrestau: int, date: Date, dateajout: Date, numtab: int)
+        + Reservation(bd: Bd, numres: int)
+
+        + save(bd: Bd) : void
+        + delete(bd: Bd) : void
+
+        + nettoyerTickets(bd: Bd) : void
+        + getAll(bd: Bd) : ArrayList<Reservation>
+        + equals(other: Reservation) : boolean
+        + setNom(nom: String) : void
+        + setPrenom(prenom: String) : void
+        + setTelephone(telephone: String) : void
+        + getDateajout() : Date
+        + setDateajout(dateajout: Date) : void
+        + toString() : String
+    }
+    ActiveRecord <|.. Reservation
+
+    class Restaurant {
+        - numrestau : int
+        - nom : String
+        - latitude : Double
+        - longitude : Double
+
+        + save(bd: Bd) : void
+        + delete(bd: Bd) : void
+
+        + Restaurant(nom: String, latitude: Double, longitude: Double)
+        + Restaurant(bd: Bd, numrestau: int)
+        # Restaurant(numrestau: int, nom: String, latitude: Double, longitude: Double)
+
+        {static} + getAll(bd: Bd) : ArrayList<Restaurant>
+        + getNumrestau() : int
+        + getMenu(bd: Bd) : List<Plat>
+        + getTables(bd: Bd) : List<Tabl>
+        + getTablesLibre(bd: Bd, date: Date) : List<Tabl>
+        + toString() : String
+    }
+    ActiveRecord <|.. Restaurant
+
+    class Tabl {
+        - numtab : int
+        - nbplace : int
+        - numrestau : int
+
+        + Tabl(nbplace: int, numrestau: int)
+        + Tabl(bd: Bd, numtab: int)
+        #protected + Tabl(numtab: int, nbplace: int, numrestau: int)
+
+        + save(bd: Bd) : void
+        + delete(bd: Bd) : void
+        + getNumtab() : int
+        + setNumtab(numtab: int) : void
+        + getNbplace() : int
+        + setNbplace(nbplace: int) : void
+        + getNumrestau() : int
+        + setNumrestau(numrestau: int) : void
+        + toString() : String
+    }
+    ActiveRecord <|.. Tabl
+}
+
+
+
+
+package "rmi.bd" {
+    class Bd {
+        - connection: Connection
+        - updates: HashMap<String, String>
+        - final url: String
+        - final username: String
+
+        + Bd(url: String, username: String, password: String)
+
+        + executeQuery(query: String) : ResultSet
+        + executeQuery(query: String, params: Object[]) : ResultSet
+        + executeQuery(statement: PreparedStatement, query: String, params: Object[]) : ResultSet
+        + lockTable(tableName: String) : void
+        + lockTables(tableNames: String...) : void
+        + unlockTable() : void
+        + haveUpdate(tableName: String) : boolean
+        + haveUpdate() : boolean
+        - getUpdate(query: String, databaseName: String, tableName: String) : boolean
+        + getConnection() : Connection
+    }
+}
+
+
+package "rmi.services.interfaces" {
+
+    interface ServiceRestaurant {
+        + getRestaurants(): String
+        + getRestaurant(indexRestaurant: int): String
+        + getMenuRestaurant(indexRestaurant: int): String
+        + getTablesRestaurant(indexRestaurant: int): String
+        + getTablesLibreRestaurant(indexRestaurant: int, date: Date): String
+        + bloquerTable(indexRestaurant: int, date: Date, nbPersonnes: int): String
+        + reserverTable(nom: String, prenom: String, telephone: String, ticket: String): void
+        + ping(): String
+    }
+
+    interface ServiceHazards {
+        + getHazards(): String
+        + ping(): String
+    }
+}
+
+
+package "rmi.services" {
+
+    class ServiceHaz {
+        - serialVersionUID: long
+
+        + getHazards() : String
+        + ping() : String
+    }
+    ServiceHazards <|.. ServiceHaz
+
+    class ServiceResto {
+        - bd: Bd
+        - restaurants: ArrayList<Restaurant>
+        - restaurantHashMap: HashMap<Integer, Restaurant>
+        - keys: KeyPair
+        - serialVersionUID: long
+
+        + ServiceResto(bd: Bd)
+
+        + getRestaurants(): String
+        + getRestaurant(indexRestaurant: int): String
+        + getMenuRestaurant(indexRestaurant: int): String
+        + getTablesRestaurant(indexRestaurant: int): String
+        + getTablesLibreRestaurant(indexRestaurant: int, date: Date): String
+        + bloquerTable(indexRestaurant: int, date: Date, nbPersonnes: int): String
+        + reserverTable(nom: String, prenom: String, telephone: String, ticket: String)
+        + ping(): String
+    }
+    ServiceRestaurant <|. ServiceResto
+
+    class LancerServices {
+        {static} - port: int
+        {static} - final nomServiceRestaurant: String = "restaurants"
+        {static} - final nomServiceHazards: String = "hazards"
+        {static} - final url: String
+
+        {static} + main(args: String[]) : void
+    }
+    LancerServices --- ServiceResto
+    LancerServices -- ServiceHaz
+}
+
+package "rmi.services.utils" {
+    class Encryption_and_Json {
+        +objectMapper: ObjectMapper
+        +generateSalt(): String
+        +getJson(Object object): String
+        +encryptMessage(PublicKey key, String message): String
+        +decryptMessage(PrivateKey key, String message): String
+    }
+}
+
+@enduml

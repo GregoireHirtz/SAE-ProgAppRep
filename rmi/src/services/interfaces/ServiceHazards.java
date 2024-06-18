@@ -1,4 +1,4 @@
-package Services;
+package services.interfaces;
 
 import java.io.IOException;
 import java.rmi.Remote;

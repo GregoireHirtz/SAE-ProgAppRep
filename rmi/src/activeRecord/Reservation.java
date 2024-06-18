@@ -91,9 +91,9 @@ public class Reservation implements ActiveRecord {
     }
 
     static public void nettoyerTickets(Bd bd) throws SQLException{
-        String sql = "DELETE FROM reservation WHERE dateajout < NOW() - INTERVAL 15 MINUTE";
+        String sql = "DELETE FROM reservation WHERE dateajout < NOW() - INTERVAL 5 MINUTE";
         try (Statement stmt = bd.getConnection().createStatement()) {
-            stmt.execute(sql);
+            //stmt.execute(sql);
         }
     }
 
@@ -116,19 +116,6 @@ public class Reservation implements ActiveRecord {
         return "Réservation n°"+numres+" ("+this.nom+" "+this.prenom+" : "+this.nbpers+" "+this.telephone+" : "+this.numrestau+")";
     }
 
-    public boolean equals(Reservation other) {
-        if(other.numres != numres) return false;
-        if(other.nom != nom) return false;
-        if(other.prenom != prenom) return false;
-        if(other.nbpers != nbpers) return false;
-        if(other.telephone != telephone) return false;
-        if(other.numrestau != numrestau) return false;
-        if(other.date != date) return false;
-        if(other.dateajout != dateajout) return false;
-        if(other.numtab != numtab) return false;
-        return true;
-    }
-
     public int getNumres() {
         return numres;
     }
@@ -141,16 +128,8 @@ public class Reservation implements ActiveRecord {
         return nom;
     }
 
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
     public String getPrenom() {
         return prenom;
-    }
-
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
     }
 
     public int getNbpers() {
@@ -163,10 +142,6 @@ public class Reservation implements ActiveRecord {
 
     public String getTelephone() {
         return telephone;
-    }
-
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
     }
 
     public int getNumrestau() {
@@ -185,6 +160,39 @@ public class Reservation implements ActiveRecord {
         this.date = date;
     }
 
+    public int getNumtab() {
+        return numtab;
+    }
+
+    public void setNumtab(int numtab) {
+        this.numtab = numtab;
+    }
+
+    public boolean equals(Reservation other) {
+        if(other.numres != numres) return false;
+        if(other.nom != nom) return false;
+        if(other.prenom != prenom) return false;
+        if(other.nbpers != nbpers) return false;
+        if(other.telephone != telephone) return false;
+        if(other.numrestau != numrestau) return false;
+        if(other.date != date) return false;
+        if(other.dateajout != dateajout) return false;
+        if(other.numtab != numtab) return false;
+        return true;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
     public Date getDateajout() {
         return dateajout;
     }
@@ -193,11 +201,4 @@ public class Reservation implements ActiveRecord {
         this.dateajout = dateajout;
     }
 
-    public int getNumtab() {
-        return numtab;
-    }
-
-    public void setNumtab(int numtab) {
-        this.numtab = numtab;
-    }
 }

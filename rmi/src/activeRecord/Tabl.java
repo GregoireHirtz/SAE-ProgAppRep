@@ -2,7 +2,6 @@ package activeRecord;
 
 import bd.Bd;
 
-import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -12,9 +11,7 @@ public class Tabl implements ActiveRecord {
     private int nbplace;
     private int numrestau;
 
-    public Tabl () {
-
-    }
+    public Tabl () {}
 
     public Tabl(int nbplace, int numrestau) {
         if (nbplace<=0 || numrestau<=0)
@@ -45,7 +42,7 @@ public class Tabl implements ActiveRecord {
         }
     }
 
-    public Tabl(int numtab, int nbplace, int numrestau) {
+    protected Tabl(int numtab, int nbplace, int numrestau) {
         this.numtab = numtab;
         this.nbplace = nbplace;
         this.numrestau = numrestau;

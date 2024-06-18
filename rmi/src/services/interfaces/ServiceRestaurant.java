@@ -1,4 +1,4 @@
-package Services;
+package services.interfaces;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -15,5 +15,4 @@ public interface ServiceRestaurant extends Remote {
    String bloquerTable(int indexRestaurant, Date date, int nbPersonnes) throws RemoteException, RuntimeException;
    void reserverTable(String nom, String prenom, String telephone, String ticket) throws RemoteException, RuntimeException;
    String ping() throws RemoteException, ServerNotActiveException;
-
 }

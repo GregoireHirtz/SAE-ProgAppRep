@@ -1,33 +1,61 @@
-<!DOCTYPE html>
+
 <html>
 <head>
     <title>RMI</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
 </head>
 <body>
 <header>
     <nav>
         <div class="titre">
-            <h1>ProgRepartie</h1>
+            <h1>NancyConnect</h1>
+
         </div>
+        <div id="meteo"><p>Météo</p></div>
         <ul class="menu">
+            <li><a id ="Github" target="_blank" href="https://github.com/GregoireHirtz/SAE-ProgAppRep/blob/main/README.md">Readme</a></li>
             <li><a id ="reset">Reset</a></li>
             <li><a id ="velo">Stations</a></li>
             <li><a id ="restaurants">Restaurants</a></li>
+            <li><a id ="incidents">Incidents</a></li>
+            <li><a id ="scolaire">Scolaire</a></li>
         </ul>
     </nav>
 </header>
 <section>
     <div id="map"></div>
-</section>
-<section>
-
 
 
 </section>
+<div id="lightbox">
+    <span class="close" id="close-lightbox" onclick="closeLightbox()">&times;</span>
+    <div id="lightbox-content">
+        <div id="reservation"></div>
+        <div id="menu"></div>
+    </div>
+</div>
+
+
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module" src="./js/map.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+<script id="menu-template" type="text/x-handlebars-template">
+    <h1>Menu</h1>
+    {{#each categories}}
+    <div class="category">
+        <h2>{{this.type}}</h2>
+        <ul>
+            {{#each this.items}}
+            <li>{{libelle}} - {{prixunit}}&#x20AC</li>
+            {{/each}}
+        </ul>
+    </div>
+    {{/each}}
+</script>
+
 
 </body>
 </html>

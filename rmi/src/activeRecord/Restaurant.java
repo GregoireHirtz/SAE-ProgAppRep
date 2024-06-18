@@ -119,6 +119,21 @@ public class Restaurant implements ActiveRecord{
         return numrestau;
     }
 
+    public List<Plat> getMenu(Bd bd)throws SQLException {
+        if (bd == null)
+            throw new IllegalArgumentException("bd == null");
+
+        String requete = "SELECT * FROM plat WHERE numplat in " +
+                "(SELECT numplat FROM menu WHERE numrestau = ?)";
+
+        ResultSet r = bd.executeQuery(requete, numrestau);
+        ArrayList<Plat> plats= new ArrayList<Plat>();
+        while (r.next()){
+            plats.add(new Plat(r.getString("libelle"), r.getString("type"), r.getDouble("prixunit")));
+        }
+        return  plats;
+    }
+
     public void setNumrestau(int numrestau) {
         this.numrestau = numrestau;
     }
@@ -145,22 +160,6 @@ public class Restaurant implements ActiveRecord{
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
-    }
-
-
-    public List<Plat> getMenu(Bd bd)throws SQLException {
-        if (bd == null)
-            throw new IllegalArgumentException("bd == null");
-
-        String requete = "SELECT * FROM plat WHERE numplat in " +
-                "(SELECT numplat FROM menu WHERE numrestau = ?)";
-
-        ResultSet r = bd.executeQuery(requete, numrestau);
-        ArrayList<Plat> plats= new ArrayList<Plat>();
-        while (r.next()){
-            plats.add(new Plat(r.getString("libelle"), r.getString("type"), r.getDouble("prixunit")));
-        }
-        return  plats;
     }
 
     public List<Tabl> getTables(Bd bd)throws SQLException {
@@ -190,9 +189,5 @@ public class Restaurant implements ActiveRecord{
             Tables.add(new Tabl(r.getInt("numtab"), r.getInt("nbplace"), r.getInt("numRestau")));
         }
         return  Tables;
-    }
-
-    public Object getPlats(Bd bd) {
-        return null;
     }
 }

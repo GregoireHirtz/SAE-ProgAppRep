@@ -1,10 +1,12 @@
-package Services;
+package services;
 
 import activeRecord.Reservation;
 import activeRecord.Restaurant;
 import activeRecord.Tabl;
 import bd.Bd;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import services.interfaces.ServiceRestaurant;
+
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.ServerNotActiveException;
@@ -15,7 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import static Services.utils.Encryption_and_Json.*;
+import static services.utils.Encryption_and_Json.*;
 
 public class ServiceResto extends RemoteServer implements ServiceRestaurant {
     Bd bd;

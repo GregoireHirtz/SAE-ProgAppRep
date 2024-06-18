@@ -10,6 +10,22 @@ public class Menu implements ActiveRecord{
     private int numrestau;
     private int numplat;
 
+    public int getNumrestau() {
+        return numrestau;
+    }
+
+    public void setNumrestau(int numrestau) {
+        this.numrestau = numrestau;
+    }
+
+    public int getNumplat() {
+        return numplat;
+    }
+
+    public void setNumplat(int numplat) {
+        this.numplat = numplat;
+    }
+
     public Menu(int numrestau, int numplat) {
         if (numrestau < 0 || numplat < 0)
             throw new IllegalArgumentException("numrestau or numplat are negative");

@@ -1,0 +1,60 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+/'autonumber'/
+
+title Bloquer une table dans le restaurant numero 7 pour 2 personnes
+
+web -> api : POST /tables
+activate api
+
+api -> "serviceResto" : reserverTable(nom, prenom, telephone, ticket)
+activate "serviceResto"
+
+"serviceResto" -> "serviceResto" : decryptMessage(ticket)
+activate "serviceResto"
+"serviceResto" --> "serviceResto" : ticket
+deactivate "serviceResto"
+
+create "reserv: Reservation"
+"serviceResto" -> "reserv: Reservation" :  objectMapper.readValue(ticket)
+
+"serviceResto" -> "reserv: Reservation" : setDateajout(null)
+activate "reserv: Reservation"
+"serviceResto" <-- "reserv: Reservation"
+deactivate "reserv: Reservation"
+
+"serviceResto" -> "reserv: Reservation" : setNom(ticket.nom)
+activate "reserv: Reservation"
+"serviceResto" <-- "reserv: Reservation"
+deactivate "reserv: Reservation"
+
+"serviceResto" -> "reserv: Reservation" : setPrenom(ticket.prenom)
+activate "reserv: Reservation"
+"serviceResto" <-- "reserv: Reservation"
+deactivate "reserv: Reservation"
+
+"serviceResto" -> "reserv: Reservation" : setTelephone(ticket.telephone)
+activate "reserv: Reservation"
+"serviceResto" <-- "reserv: Reservation"
+deactivate "reserv: Reservation"
+
+"serviceResto" -> "reserv: Reservation" : save()
+activate "reserv: Reservation"
+
+    database bd
+    "reserv: Reservation" -> bd : UPDATE reservation SET ....
+    activate bd
+    "reserv: Reservation" <-- bd
+    deactivate
+
+"serviceResto" <-- "reserv: Reservation"
+deactivate "reserv: Reservation"
+
+api <-- "serviceResto"
+deactivate "serviceResto"
+
+web <-- api
+deactivate api
+
+@enduml

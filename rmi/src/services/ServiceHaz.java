@@ -1,4 +1,6 @@
-package Services;
+package services;
+
+import services.interfaces.ServiceHazards;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -7,7 +9,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.ServerNotActiveException;
