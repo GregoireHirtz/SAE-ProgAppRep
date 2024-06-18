@@ -9,11 +9,13 @@
 
 ## INSTALLATION
 
-Pour executer le projet, il faut executer les commandes suivantes : 
+Pour executer le projet, il faut executer les commandes suivantes :
+- téléchargement des fichiers
 ```bash
 curl -sSL https://github.com/GregoireHirtz/SAE-ProgAppRep/raw/main/doc/script/script_install.sh | bash
 ```
 
+- execution de l'application
 ```bash
 curl -sSL -o script_run.sh https://github.com/GregoireHirtz/SAE-ProgAppRep/raw/main/doc/script/script_run.sh && bash script_run.sh && rm script_run.sh
 ```
