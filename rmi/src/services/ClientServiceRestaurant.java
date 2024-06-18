@@ -36,10 +36,10 @@ public class ClientServiceRestaurant {
         System.out.println(resto.getMenuRestaurant(1));
         System.out.println(resto.getTablesRestaurant(1));
         System.out.println(resto.getTablesLibreRestaurant(1, Date.valueOf("2024-06-15")));
-        String reservation = resto.bloquerTable(1, Date.valueOf("2024-06-15"), 6);
-        System.out.println(reservation);
-        reservation = resto.bloquerTable(1, Date.valueOf("2024-06-15"), 4);
-        System.out.println(reservation);
-        resto.reserverTable("Naigeon", "Adrien", "3630", reservation);
+       // String reservation = resto.bloquerTable(1, Date.valueOf("2024-06-15"), 6);
+        //System.out.println(reservation);
+       // reservation = resto.bloquerTable(1, Date.valueOf("2024-06-15"), 4);
+        //System.out.println(reservation);
+        //resto.reserverTable("Naigeon", "Adrien", "3630", reservation);
     }
 }

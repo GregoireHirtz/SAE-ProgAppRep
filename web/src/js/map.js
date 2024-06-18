@@ -125,7 +125,7 @@ export function openLightbox(restaurant) {
     //ReservationFormSubmit(restaurant.numrestau)
     const lightbox = document.getElementById('lightbox');
     displayReservationForm(restaurant)
-    displayPlatsParCategorie(1) //restaurant.numrestau
+    displayPlatsParCategorie(restaurant.numrestau) //restaurant.numrestau
 
     const lightboxContent = document.getElementById('lightbox-content');
     lightbox.style.display = 'block';
