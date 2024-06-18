@@ -1,5 +1,7 @@
 package services;
 
+import services.interfaces.ServiceRestaurant;
+
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;

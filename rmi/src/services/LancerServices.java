@@ -2,6 +2,8 @@ package services;
 
 import activeRecord.Reservation;
 import bd.Bd;
+import services.interfaces.ServiceHazards;
+import services.interfaces.ServiceRestaurant;
 
 import javax.xml.datatype.DatatypeConstants;
 import java.net.UnknownHostException;

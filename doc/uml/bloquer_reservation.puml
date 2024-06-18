@@ -74,10 +74,13 @@ loop tables : table
     end
 end
 == unlock reservation, restaurant, tabl ==
-api <-- "serviceResto" : json(reserv)
+api <-- "serviceResto" : ticket
+note right
+    on hash la class
+end note
 deactivate "serviceResto"
 
-web <-- api : json
+web <-- api : ticket
 deactivate api
 
 @enduml

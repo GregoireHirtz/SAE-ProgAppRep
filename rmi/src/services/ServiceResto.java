@@ -5,6 +5,8 @@ import activeRecord.Restaurant;
 import activeRecord.Tabl;
 import bd.Bd;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import services.interfaces.ServiceRestaurant;
+
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.ServerNotActiveException;

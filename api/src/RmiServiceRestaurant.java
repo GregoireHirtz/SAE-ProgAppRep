@@ -1,6 +1,6 @@
 
 
-import services.ServiceRestaurant;
+import services.interfaces.ServiceRestaurant;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
