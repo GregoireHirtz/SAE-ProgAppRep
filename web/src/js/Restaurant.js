@@ -4,10 +4,11 @@ import {addMarkerRestau} from "./map.js";
 export async function loadRestaurant() {
     try {
         //On récupère les données associées aux restaurants
-        //const restaurant = await loadResource("http://localhost:8080/restaurants");
+        const restaurant = await loadResource("http://localhost:8080/restaurants");
 
         // on ajoute chaque restaurant à la carte
-        addMarkerRestau(restaurants)
+        console.log(restaurant)
+        addMarkerRestau(restaurant)
 
     } catch (error) {
         console.error('Une erreur s\'est produite lors du chargement et de l\'affichage des markers :', error);

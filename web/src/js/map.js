@@ -37,7 +37,9 @@ export function addMarkerStation(information,status) {
 
 export function addMarkerRestau(restaurants) {
     suppmarker();
+    console.log(restaurants)
     restaurants.forEach(restaurant => {
+        console.log(restaurant)
         var popupContent = '<b>' + restaurant.nom + '</b><br>' +
             '<label for="nbPersonnes">Nombre de personnes :</label>' +
             '<input type="number" id="nbPersonnes" name="nbPersonnes" value="1"><br>' +
