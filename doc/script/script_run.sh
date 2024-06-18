@@ -14,18 +14,18 @@ echo "Démarrage du serveur HTTP sur le port 8000..."
 
 cd ../web/src
 
-python3 -m http.server 8000 >/dev/null 2>&1 &
-pid3=$!
+#python3 -m http.server 8000 >/dev/null 2>&1 &
+#pid3=$!
 
-echo "PID: "$pid1 $pid2 $pid3
-echo "http://localhost:8000/"
+echo "PID: "$pid1 $pid2 #$pid3
+echo "https://webetu.iutnc.univ-lorraine.fr/www/hirtz44u/web/src/"
 
 stop_services() {
     echo " "
     echo "Arrêt des services..."
     kill $pid1
     kill $pid2
-    kill $pid3
+    #kill $pid3
     exit
 }
 
