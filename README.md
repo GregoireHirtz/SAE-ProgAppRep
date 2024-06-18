@@ -7,17 +7,17 @@
 
 <br>
 
-## INSTALLATION
+## INSTALLATION 
 
 Pour executer le projet, il faut executer les commandes suivantes :
 - téléchargement des fichiers
 ```bash
-curl -sSL https://github.com/GregoireHirtz/SAE-ProgAppRep/raw/main/doc/script/script_install.sh | bash
+curl -sSL https://raw.githubusercontent.com/GregoireHirtz/SAE-ProgAppRep/main/doc/script/script_install.sh | bash
 ```
 
 - execution de l'application
 ```bash
-curl -sSL -o script_run.sh https://github.com/GregoireHirtz/SAE-ProgAppRep/raw/main/doc/script/script_run.sh && bash script_run.sh && rm script_run.sh
+curl -sSL -o script_run.sh https://raw.githubusercontent.com/GregoireHirtz/SAE-ProgAppRep/main/doc/script/script_run.sh && bash script_run.sh && rm script_run.sh
 ```
 
 
@@ -29,7 +29,7 @@ curl -sSL -o script_run.sh https://github.com/GregoireHirtz/SAE-ProgAppRep/raw/m
 
 ## RMI
 
-
+![diagramme_classe_rmi](doc/img/diag_class_rmi.svg)
 
 
 
@@ -92,6 +92,8 @@ curl -sSL -o script_run.sh https://github.com/GregoireHirtz/SAE-ProgAppRep/raw/m
 - <u>`#numrestau`</u> INT(4)
 - <u>`#numplat`</u> INT(4)
 </details>
+
+[fichier sql de création de la bd](rmi/ressource/data.sql)
 
 <br>
 

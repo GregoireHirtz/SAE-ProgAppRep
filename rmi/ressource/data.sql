@@ -86,10 +86,10 @@ ALTER TABLE menu
 
 -- Insère quelques restaurants
 INSERT INTO restaurant (nom, latitude, longitude) VALUES
-    ('Chez Marcel', 48.6921, 6.1844),
-    ('Le Bistrot Lorrain', 48.6923, 6.1847),
-    ('La Table Provençale', 48.6918, 6.1841),
-    ('Sushi Fusion', 48.6925, 6.1849);
+    ('Chez Marcel', 48.6908, 6.1772),
+    ('Le Bistrot Lorrain', 48.6987, 6.1813),
+    ('La Table Provençale', 48.6930, 6.1825),
+    ('Sushi Fusion', 48.6905, 6.1860);
 
 -- Tuples de Plat
 INSERT INTO plat (libelle, type, prixunit)

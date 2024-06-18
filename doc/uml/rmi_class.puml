@@ -1,6 +1,8 @@
 @startuml
 'https://plantuml.com/class-diagram
 
+left to right direction
+
 package "rmi.activeRecord" {
 
     interface ActiveRecord {
