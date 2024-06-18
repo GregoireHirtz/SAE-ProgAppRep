@@ -176,8 +176,7 @@ meteo {
     align-items: center;
 }
 
-#imgGithub {
-    background: white;
+#Github {
+    border: 1px solid white;
     border-radius: 5px;
-    height: 40px;
 }
