@@ -1,10 +1,10 @@
 import {loadResource} from "./Loader.js";
 import {addMarkerRestau} from "./map.js";
-
+import { config } from './config.js';
 export async function loadRestaurant() {
     try {
         //On récupère les données associées aux restaurants
-        const restaurant = await loadResource("http://localhost:8080/restaurants");
+        const restaurant = await loadResource(`${config.API_BASE_URL}/restaurants`);
 
         // on ajoute chaque restaurant à la carte
         console.log(restaurant)

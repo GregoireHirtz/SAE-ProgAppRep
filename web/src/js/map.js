@@ -37,9 +37,7 @@ export function addMarkerStation(information,status) {
 
 export function addMarkerRestau(restaurants) {
     suppmarker();
-    console.log(restaurants)
     restaurants.forEach(restaurant => {
-        console.log(restaurant)
         var popupContent = '<b>' + restaurant.nom + '</b><br>' +
             '<label for="nbPersonnes">Nombre de personnes :</label>' +
             '<input type="number" id="nbPersonnes" name="nbPersonnes" value="1"><br>' +
@@ -127,7 +125,7 @@ export function openLightbox(restaurant) {
     //ReservationFormSubmit(restaurant.numrestau)
     const lightbox = document.getElementById('lightbox');
     displayReservationForm(restaurant)
-    displayPlatsParCategorie(1) //restaurant.numrestau
+    displayPlatsParCategorie(restaurant.numrestau) //restaurant.numrestau
 
     const lightboxContent = document.getElementById('lightbox-content');
     lightbox.style.display = 'block';
