@@ -12,7 +12,7 @@ pid2=$!
 
 #echo "Démarrage du serveur HTTP sur le port 8000..."
 
-cd ../web/src
+#cd ../web/src
 
 #python3 -m http.server 8000 >/dev/null 2>&1 &
 #pid3=$!
