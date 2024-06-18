@@ -7,7 +7,7 @@
 
 <br>
 
-## INSTALLATION
+## INSTALLATION 
 
 Pour executer le projet, il faut executer les commandes suivantes :
 - téléchargement des fichiers
