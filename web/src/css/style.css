@@ -1,6 +1,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
+    display: none;
 }
 
 header {
@@ -25,11 +26,13 @@ nav {
     margin: 0;
     padding: 0;
     display: flex;
+    align-items: center;
 }
 
 .menu li {
     margin: 0 15px; /* Ajustez les marges selon vos besoins */
     padding: 10px; /* Ajustez le padding selon vos besoins */
+    cursor: pointer;
 }
 
 .menu a {
@@ -172,4 +175,10 @@ meteo {
     padding: 10px; /* Ajustez le padding selon vos besoins */
     display: flex;
     align-items: center;
+}
+
+#imgGithub {
+    background: white;
+    border-radius: 5px;
+    height: 40px;
 }
