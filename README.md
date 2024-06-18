@@ -98,6 +98,9 @@ données avec une valeur lorsqu'une tâche est juste bloquée et null si la tâc
 Par la suite, de façon récurrente, nous parcourons la table reservation et les insertions 
 avec un `dateajout` non nul et dépassant 15 minutes sont supprimées.
 
+[diag_sequence_bloquer_reservation  ](doc/img/bloquer_reservation.svg)<br>
+[diag_sequence_valider_reservation](doc/img/valider_reservation.svg)
+
 
 ## API HTTP
 
