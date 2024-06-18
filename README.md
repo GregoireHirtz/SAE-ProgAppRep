@@ -93,6 +93,8 @@ curl -sSL -o script_run.sh https://github.com/GregoireHirtz/SAE-ProgAppRep/raw/m
 - <u>`#numplat`</u> INT(4)
 </details>
 
+[fichier sql de création de la bd](rmi/ressource/data.sql)
+
 <br>
 
 ### Transactionnelle
