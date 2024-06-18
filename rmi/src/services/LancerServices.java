@@ -44,9 +44,9 @@ public class LancerServices {
         Scanner sc = new Scanner(System.in);
         System.out.println("Connexion à la base de donnée :");
         System.out.print("-Utilisateur: ");
-        String user = sc.nextLine();
+        String user = "hirtz44u";//sc.nextLine();
         System.out.print("-Mot de passe: ");
-        String password = sc.nextLine();
+        String password = "password";//sc.nextLine();
 
         //---Connexion à la base de donnée
         Bd bd = new Bd(url, user, password);
