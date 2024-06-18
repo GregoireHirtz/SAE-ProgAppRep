@@ -29,7 +29,7 @@ curl -sSL -o script_run.sh https://github.com/GregoireHirtz/SAE-ProgAppRep/raw/m
 
 ## RMI
 
-
+![diagramme_classe_rmi](doc/img/diag_class_rmi.svg)
 
 
 
