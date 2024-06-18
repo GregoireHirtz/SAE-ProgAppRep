@@ -11,72 +11,50 @@ activate api
 api -> "serviceResto" : reserverTable(nom, prenom, telephone, ticket)
 activate "serviceResto"
 
-
-"serviceResto" -> "serviceResto" : this.getTablesLibreRestaurant(7, date)
+"serviceResto" -> "serviceResto" : decryptMessage(ticket)
 activate "serviceResto"
-
-"serviceResto" -> "serviceResto" : this.getRestaurants()
-activate "serviceResto"
-"serviceResto" --> "serviceResto" : restaurants
+"serviceResto" --> "serviceResto" : ticket
 deactivate "serviceResto"
 
-create "restau: Restaurant"
-"serviceResto" -> "restau: Restaurant" : restaurants.get(7)
+create "reserv: Reservation"
+"serviceResto" -> "reserv: Reservation" :  objectMapper.readValue(ticket)
 
-"serviceResto" -> "restau: Restaurant" : restau.getTableLibre(date)
-activate "restau: Restaurant"
+"serviceResto" -> "reserv: Reservation" : setDateajout(null)
+activate "reserv: Reservation"
+"serviceResto" <-- "reserv: Reservation"
+deactivate "reserv: Reservation"
 
-"restau: Restaurant" -> bd : SELECT * FROM tabl \n\tWHERE numrestau = ? \n\tAND numtab NOT IN \n\t\t(SELECT numtab FROM reservation \n\t\tWHERE numrestau = ? AND date = ?)
-activate bd
+"serviceResto" -> "reserv: Reservation" : setNom(ticket.nom)
+activate "reserv: Reservation"
+"serviceResto" <-- "reserv: Reservation"
+deactivate "reserv: Reservation"
 
-"restau: Restaurant" <-- bd
-deactivate bd
+"serviceResto" -> "reserv: Reservation" : setPrenom(ticket.prenom)
+activate "reserv: Reservation"
+"serviceResto" <-- "reserv: Reservation"
+deactivate "reserv: Reservation"
 
-"serviceResto" <-- "restau: Restaurant" : tables: List<Table>
-deactivate "restau: Restaurant"
+"serviceResto" -> "reserv: Reservation" : setTelephone(ticket.telephone)
+activate "reserv: Reservation"
+"serviceResto" <-- "reserv: Reservation"
+deactivate "reserv: Reservation"
 
-"serviceResto" --> "serviceResto" : tables
-deactivate "serviceResto"
+"serviceResto" -> "reserv: Reservation" : save()
+activate "reserv: Reservation"
 
-"serviceResto" -> "serviceResto" : reserv = ""
-
-loop tables : table
-    create "table: Table"
-    "serviceResto" -> "table: Table"
-
-    "serviceResto" -> "table: Table": table.getNbPlace()
-    activate "table: Table"
-
-    "table: Table" -> bd : SELECT
+    database bd
+    "reserv: Reservation" -> bd : UPDATE reservation SET ....
     activate bd
-    "table: Table" <-- bd : nbPlace
-    deactivate bd
+    "reserv: Reservation" <-- bd
+    deactivate
 
-    "serviceResto" <-- "table: Table"
-    deactivate "table: Table"
+"serviceResto" <-- "reserv: Reservation"
+deactivate "reserv: Reservation"
 
-    alt nbPlace >= 2
-        create "reserv: Reservation"
-        "serviceResto" -> "reserv: Reservation" : new Reservation(" ", " ", 2, " ", 7, date, dateCourante, table)
-
-        "serviceResto" -> "reserv: Reservation" : reserv.save()
-        activate "reserv: Reservation"
-
-        database bd
-        "reserv: Reservation" -> bd : INSERT INTO \n\treservation (nom, prenom, nbpers, telephone, numrestau, date, dateajout, numtab) \n\tVALUES (" ", " ", 2, " ", 7, date, dateCourante, table)
-        activate bd
-        "reserv: Reservation" <-- bd
-        deactivate bd
-
-        "serviceResto" <-- "reserv: Reservation"
-        deactivate "reserv: Reservation"
-    end
-end
-== unlock reservation, restaurant, tabl ==
-api <-- "serviceResto" : json(reserv)
+api <-- "serviceResto"
 deactivate "serviceResto"
 
-web <-- api : json
+web <-- api
 deactivate api
 
 @enduml
