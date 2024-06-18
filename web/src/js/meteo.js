@@ -1,11 +1,14 @@
 import {loadResource} from "./Loader.js";
 import {addMarkerRestau} from "./map.js";
+import {displayTemperature} from "./ui.js";
 
 export async function loadMeteo() {
     try {
         //on récupère les données météo
         const meteo = await loadResource("https://www.infoclimat.fr/public-api/gfs/json?_ll=48.67103,6.15083&_auth=ARsDFFIsBCZRfFtsD3lSe1Q8ADUPeVRzBHgFZgtuAH1UMQNgUTNcPlU5VClSfVZkUn8AYVxmVW0Eb1I2WylSLgFgA25SNwRuUT1bPw83UnlUeAB9DzFUcwR4BWMLYwBhVCkDb1EzXCBVOFQoUmNWZlJnAH9cfFVsBGRSPVs1UjEBZwNkUjIEYVE6WyYPIFJjVGUAZg9mVD4EbwVhCzMAMFQzA2JRMlw5VThUKFJiVmtSZQBpXGtVbwRlUjVbKVIuARsDFFIsBCZRfFtsD3lSe1QyAD4PZA%3D%3D&_c=19f3aa7d766b6ba91191c8be71dd1ab2");
+        const targetDate = getCurrentDateTime();
         console.log(meteo)
+        displayWeatherData(meteo,targetDate)
 
     } catch (error) {
         console.error('Une erreur s\'est produite lors du chargement et de l\'affichage des markers :', error);
@@ -13,43 +16,50 @@ export async function loadMeteo() {
 }
 
 
-// Exemple de JSON reçu
-const jsonResponse = `{
-    "request_state": 200,
-    "request_key": "fd543c77e33d6c8a5e218e948a19e487",
-    "message": "OK",
-    "model_run": "20",
-    "source": "internal:GFS:1",
-    "data": {
-        "2024-06-17 23:00:00": { "temperature": { "2m": 290.2 } },
-        "2024-06-18 02:00:00": { "temperature": { "2m": 289 } },
-        "2024-06-18 05:00:00": { "temperature": { "2m": 288.4 } },
-        "2024-06-18 08:00:00": { "temperature": { "2m": 289.3 } },
-        "2024-06-18 11:00:00": { "temperature": { "2m": 290.5 } },
-        "2024-06-18 14:00:00": { "temperature": { "2m": 293.9 } },
-        "2024-06-18 17:00:00": { "temperature": { "2m": 296.4 } },
-        "2024-06-18 20:00:00": { "temperature": { "2m": 294.2 } },
-        "2024-06-18 23:00:00": { "temperature": { "2m": 289.5 } },
-        "2024-06-19 02:00:00": { "temperature": { "2m": 288.4 } }
-    }
-}`;
 
-/*function afficherTemperatureActuelle() {
-    // Parser le JSON
-    const meteoData = JSON.parse(jsonResponse).data;
 
-    // Obtenir l'heure actuelle et la formater
-    const dateActuelle = new Date();
-    const arrondirHeure = new Date(dateActuelle.setMinutes(0, 0, 0)); // Arrondir à l'heure complète la plus proche
-    console.log(arrondirHeure)
+function getCurrentDateTime(offsetHours = 0) {
+    const now = new Date();
+    now.setHours(now.getHours() + offsetHours);
+    const year = now.getFullYear();
+    let month = now.getMonth() + 1; // Les mois sont indexés de 0 à 11, donc on ajoute 1
+    month = month < 10 ? `0${month}` : month; // Pour obtenir le format avec deux chiffres (par exemple, 05 pour mai)
+    let day = now.getDate();
+    day = day < 10 ? `0${day}` : day; // Pour obtenir le format avec deux chiffres (par exemple, 03 pour le 3ème jour du mois)
+    let hours = now.getHours();
+    hours = hours < 10 ? `0${hours}` : hours; // Formatage pour obtenir deux chiffres pour les heures
 
-    console.log(meteoData[arrondirHeure])
-    // Vérifier si les données pour l'heure actuelle existent
-    if (meteoData[arrondirHeure]) {
-        console.log(`La température actuelle à ${arrondirHeure} est de ${meteoData[arrondirHeure].temperature['2m']} K.`);
-    } else {
-        console.log('Données météorologiques non disponibles pour l\'heure actuelle.');
-    }
+    return `${year}-${month}-${day} ${hours}:00:00`;
 }
 
-afficherTemperatureActuelle();*/
+function displayWeatherData(data, dateC) {
+    const dateEntry = data[dateC]; // Accéder directement à l'entrée pour la date spécifiée
+
+    let humidite = 'Not available';
+    let temperature = 'Not available';
+    let windSpeed = 'Not available';
+
+    if (dateEntry) {
+        // Stocker l'humidité à 2m dans une variable
+        if (dateEntry.humidite && dateEntry.humidite['2m']) {
+            humidite = dateEntry.humidite['2m'];
+        }
+
+        // Stocker la température solaire dans une variable
+        if (dateEntry.temperature && dateEntry.temperature['2m']) {
+            temperature = dateEntry.temperature['2m'] -273;
+        }
+
+        // Stocker la vitesse du vent moyen dans une variable
+        if (dateEntry.vent_moyen && dateEntry.vent_moyen['10m']) {
+            windSpeed = dateEntry.vent_moyen['10m'];
+        }
+
+
+    } else {
+        console.log(`Weather data not available for ${dateC}`);
+    }
+
+    // Retourner ou utiliser les variables comme nécessaire
+    return displayTemperature(temperature,humidite,windSpeed)
+}

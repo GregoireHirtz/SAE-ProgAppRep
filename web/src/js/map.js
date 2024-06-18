@@ -1,7 +1,6 @@
 import {loadVelo} from "./velo.js";
-import {loadRestaurant,finalizeReservation,ReservationFormSubmit} from "./Restaurant.js";
+import {loadRestaurant} from "./Restaurant.js";
 import {displayPlatsParCategorie,displayReservationForm} from "./ui.js";
-import {loadResource} from "./Loader.js";
 import {loadHazards} from "./hazards.js";
 import {loadScolaire} from "./scolaire.js";
 import {loadMeteo} from "./meteo.js";
@@ -105,7 +104,6 @@ function suppmarker() {
 
 
 createMap()
-loadMeteo()
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('velo').addEventListener('click', loadVelo);
@@ -116,6 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.openLightbox=openLightbox;
     window.closeLightbox=closeLightbox;
+    loadMeteo()
 });
 
 

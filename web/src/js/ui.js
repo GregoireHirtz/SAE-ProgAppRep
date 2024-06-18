@@ -55,18 +55,28 @@ export function displayReservationForm(restaurant) {
 
 }
 
-export function displayTemperature(temperature) {
+export function displayTemperature(temperature,humidite,vent) {
     const meteoContainer = document.getElementById('meteo');
-
+    const roundedTemperature = temperature.toFixed(2);
     // Efface le contenu précédent
     meteoContainer.innerHTML = '';
 
     // Crée un élément pour afficher la température
     const tempElement = document.createElement('p');
-    if(temperature>10) {
-        tempElement.textContent = `🔆 Température actuelle : ${temperature} °C`;
+    if(temperature>20) {
+        tempElement.textContent = `🔆 Température actuelle : ${roundedTemperature} °C`;
+    }
+    if(temperature>10&&humidite>0.5) {
+        tempElement.textContent = `⛅ Température actuelle : ${roundedTemperature} °C`;
     }
 
+    if(temperature<10&&humidite>1) {
+        tempElement.textContent = `🌧 Température actuelle : ${roundedTemperature} °C`;
+    }
+
+    if(temperature<10&&vent>30) {
+        tempElement.textContent = `💨 Température actuelle : ${roundedTemperature} °C`;
+    }
 
     // Ajoute l'élément à la fin du container météo
     meteoContainer.appendChild(tempElement);
