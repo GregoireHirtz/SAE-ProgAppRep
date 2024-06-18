@@ -1,0 +1,82 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+/'autonumber'/
+
+title Bloquer une table dans le restaurant numero 7 pour 2 personnes
+
+web -> api : POST /tables
+activate api
+
+api -> "serviceResto" : reserverTable(nom, prenom, telephone, ticket)
+activate "serviceResto"
+
+
+"serviceResto" -> "serviceResto" : this.getTablesLibreRestaurant(7, date)
+activate "serviceResto"
+
+"serviceResto" -> "serviceResto" : this.getRestaurants()
+activate "serviceResto"
+"serviceResto" --> "serviceResto" : restaurants
+deactivate "serviceResto"
+
+create "restau: Restaurant"
+"serviceResto" -> "restau: Restaurant" : restaurants.get(7)
+
+"serviceResto" -> "restau: Restaurant" : restau.getTableLibre(date)
+activate "restau: Restaurant"
+
+"restau: Restaurant" -> bd : SELECT * FROM tabl \n\tWHERE numrestau = ? \n\tAND numtab NOT IN \n\t\t(SELECT numtab FROM reservation \n\t\tWHERE numrestau = ? AND date = ?)
+activate bd
+
+"restau: Restaurant" <-- bd
+deactivate bd
+
+"serviceResto" <-- "restau: Restaurant" : tables: List<Table>
+deactivate "restau: Restaurant"
+
+"serviceResto" --> "serviceResto" : tables
+deactivate "serviceResto"
+
+"serviceResto" -> "serviceResto" : reserv = ""
+
+loop tables : table
+    create "table: Table"
+    "serviceResto" -> "table: Table"
+
+    "serviceResto" -> "table: Table": table.getNbPlace()
+    activate "table: Table"
+
+    "table: Table" -> bd : SELECT
+    activate bd
+    "table: Table" <-- bd : nbPlace
+    deactivate bd
+
+    "serviceResto" <-- "table: Table"
+    deactivate "table: Table"
+
+    alt nbPlace >= 2
+        create "reserv: Reservation"
+        "serviceResto" -> "reserv: Reservation" : new Reservation(" ", " ", 2, " ", 7, date, dateCourante, table)
+
+        "serviceResto" -> "reserv: Reservation" : reserv.save()
+        activate "reserv: Reservation"
+
+        database bd
+        "reserv: Reservation" -> bd : INSERT INTO \n\treservation (nom, prenom, nbpers, telephone, numrestau, date, dateajout, numtab) \n\tVALUES (" ", " ", 2, " ", 7, date, dateCourante, table)
+        activate bd
+        "reserv: Reservation" <-- bd
+        deactivate bd
+
+        "serviceResto" <-- "reserv: Reservation"
+        deactivate "reserv: Reservation"
+    end
+end
+== unlock reservation, restaurant, tabl ==
+api <-- "serviceResto" : json(reserv)
+deactivate "serviceResto"
+
+web <-- api : json
+deactivate api
+
+@enduml

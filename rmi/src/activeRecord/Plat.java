@@ -40,6 +40,38 @@ public class Plat implements ActiveRecord{
         }
     }
 
+    public int getNumplat() {
+        return numplat;
+    }
+
+    public void setNumplat(int numplat) {
+        this.numplat = numplat;
+    }
+
+    public String getLibelle() {
+        return libelle;
+    }
+
+    public void setLibelle(String libelle) {
+        this.libelle = libelle;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public double getPrixunit() {
+        return prixunit;
+    }
+
+    public void setPrixunit(double prixunit) {
+        this.prixunit = prixunit;
+    }
+
     @Override
     public void save(Bd bd) throws SQLException{
         if (bd == null) throw new IllegalArgumentException("La connexion ne peut pas être null");

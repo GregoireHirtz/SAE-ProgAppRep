@@ -116,6 +116,58 @@ public class Reservation implements ActiveRecord {
         return "Réservation n°"+numres+" ("+this.nom+" "+this.prenom+" : "+this.nbpers+" "+this.telephone+" : "+this.numrestau+")";
     }
 
+    public int getNumres() {
+        return numres;
+    }
+
+    public void setNumres(int numres) {
+        this.numres = numres;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public int getNbpers() {
+        return nbpers;
+    }
+
+    public void setNbpers(int nbpers) {
+        this.nbpers = nbpers;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public int getNumrestau() {
+        return numrestau;
+    }
+
+    public void setNumrestau(int numrestau) {
+        this.numrestau = numrestau;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public int getNumtab() {
+        return numtab;
+    }
+
+    public void setNumtab(int numtab) {
+        this.numtab = numtab;
+    }
+
     public boolean equals(Reservation other) {
         if(other.numres != numres) return false;
         if(other.nom != nom) return false;
