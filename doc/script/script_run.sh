@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd SAE_hirtz_mellano_naigeon_reveillard/jar
+cd SAE_hirtz_mellano_naigeon_reveillard
 
 echo "Démarrage API HTTP : port 8080"
 java -jar api.jar localhost >/dev/null 2>&1 &
@@ -10,7 +10,7 @@ echo "Démarrage RMI JAVA : annuaire port 1659"
 java -jar rmi.jar >/dev/null 2>&1 &
 pid2=$!
 
-echo "Démarrage du serveur HTTP sur le port 8000..."
+#echo "Démarrage du serveur HTTP sur le port 8000..."
 
 cd ../web/src
 
