@@ -163,3 +163,13 @@ input[type="tel"],
     text-decoration: none;
     cursor: pointer;
 }
+
+meteo {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: white; /* Couleur de fond blanche pour le conteneur */
+    padding: 10px; /* Ajustez le padding selon vos besoins */
+    display: flex;
+    align-items: center;
+}

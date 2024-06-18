@@ -6,7 +6,7 @@ import { config } from './config.js';
 export async function displayPlatsParCategorie(idRestaurant) {
     try {
         // Filtre les plats par catégorie
-        const plats = await loadResource(`${config.API_BASE_URL}/plats/${idRestaurant}`);
+        const plats = await loadResource(`${config.API_BASE_URL}plats/${idRestaurant}`);
 
         const categories = [
             { type: "Entrée", items: plats.filter(plat => plat.type === "Entrée") },
@@ -53,4 +53,21 @@ export function displayReservationForm(restaurant) {
 
     lightbox.style.display = 'block'; // Affiche la lightbox
 
+}
+
+export function displayTemperature(temperature) {
+    const meteoContainer = document.getElementById('meteo');
+
+    // Efface le contenu précédent
+    meteoContainer.innerHTML = '';
+
+    // Crée un élément pour afficher la température
+    const tempElement = document.createElement('p');
+    if(temperature>10) {
+        tempElement.textContent = `🔆 Température actuelle : ${temperature} °C`;
+    }
+
+
+    // Ajoute l'élément à la fin du container météo
+    meteoContainer.appendChild(tempElement);
 }
