@@ -7,6 +7,15 @@
 
 <br>
 
+## INSTALLATION
+
+Pour executer le projet, il faut executer les commandes suivantes : 
+
+<code>curl -sSL https://github.com/GregoireHirtz/SAE-ProgAppRep/raw/main/doc/script/script_install.sh | bash</code>
+
+<code>curl -sSL -o script_run.sh https://github.com/GregoireHirtz/SAE-ProgAppRep/raw/main/doc/script/script_run.sh && bash script_run.sh && rm script_run.sh</code>
+
+
 ## ACTEURS
 
 ![shéma archi](doc/img/shema_acteur.svg)
