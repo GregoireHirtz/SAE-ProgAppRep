@@ -75,12 +75,12 @@ loop tables : table
 end
 == unlock reservation, restaurant, tabl ==
 api <-- "serviceResto" : ticket
-note right
-    on hash la class
-end note
 deactivate "serviceResto"
 
 web <-- api : ticket
+note right
+    ticket = encryptage (RSA) de l'objet Reservation en 1 String en base64
+end note
 deactivate api
 
 @enduml
