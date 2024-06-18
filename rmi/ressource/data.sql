@@ -1,9 +1,9 @@
 DROP TABLE IF EXISTS commande;
-DROP TABLE IF EXISTS tabl;
 DROP TABLE IF EXISTS reservation;
 DROP TABLE IF EXISTS menu;
 DROP TABLE IF EXISTS restaurant;
 DROP TABLE IF EXISTS plat;
+DROP TABLE IF EXISTS tabl;
 
 -- Table reservation
 CREATE TABLE reservation (
@@ -86,10 +86,10 @@ ALTER TABLE menu
 
 -- Insère quelques restaurants
 INSERT INTO restaurant (nom, latitude, longitude) VALUES
-    ('Le Petit Parisien', 48.8566, 2.3522), -- Paris
-    ('The London Pub', 51.5074, -0.1278), -- Londres
-    ('La Bella Italia', 41.9028, 12.4964), -- Rome
-    ('Tokyo Sushi House', 35.6895, 139.6917); -- Tokyo
+    ('Chez Marcel', 48.6921, 6.1844),
+    ('Le Bistrot Lorrain', 48.6923, 6.1847),
+    ('La Table Provençale', 48.6918, 6.1841),
+    ('Sushi Fusion', 48.6925, 6.1849);
 
 -- Tuples de Plat
 INSERT INTO plat (libelle, type, prixunit)
