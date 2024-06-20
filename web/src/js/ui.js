@@ -57,7 +57,7 @@ export function displayReservationForm(restaurant) {
 
 export function displayTemperature(temperature,humidite,vent) {
     const meteoContainer = document.getElementById('meteo');
-    const roundedTemperature = temperature.toFixed(2);
+    //const roundedTemperature = temperature.toFixed(2);
     // Efface le contenu précédent
     meteoContainer.innerHTML = '';
 
