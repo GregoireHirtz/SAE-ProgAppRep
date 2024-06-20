@@ -29,6 +29,8 @@ curl -sSL -o script_run.sh https://raw.githubusercontent.com/GregoireHirtz/SAE-P
 
 ## RMI
 
+![diagramme_classe_rmi](doc/img/rmiiiiii.drawio.svg)
+
 ![diagramme_classe_rmi](doc/img/diag_class_rmi.svg)
 
 
